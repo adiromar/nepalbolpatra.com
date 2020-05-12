@@ -10,21 +10,83 @@ if($_GET['s']){
 	// echo "other";
 }
 	?>
+<?php
+if (isset($_GET['register'])){
+          $register = $_GET['register'];  
+         
+          if($register == 'true') { 
+?>
+<section class="hero-section-1 main-pg-section">
+	<div class="container card">
+		<div class="row p-3">
+			<h4>User Registration</h4>
+			<div class="col-md-12 col-sm-12 mt-4">
+				<div class="alert alert-success">Please Check your email and set the password!</div>
+			</div>
+			
+		</div>
+	</div>
+</section>
+
+<?php }else{ ?>
+	<section class="hero-section-1 main-pg-section">
+	<div class="container card">
+		<div class="row p-3">
+
+			<h4>User Registration</h4>
+			<div class="col-md-12 col-sm-12 mt-4">
+				<div class="alert alert-warning">Please provide a unique username or email address!</div>
+			</div>
 
 
+			
+		</div>
+	</div>
+</section>
+
+
+<?php } }else{ ?>
+
+
+<style type="text/css">
+	.nav-link{
+		color: #fff;
+    	background: #7d8c9f;
+    	border-bottom: 1px solid #fff;
+	}
+	.nav-link:hover{
+		color: #fff;
+	}
+	.p_list span{
+		color: black;
+		font-weight: 600;
+	}
+</style>
 	<section class="hero-section-1 bg-image-section full-banner visible-lg" style="background-image: url('<?php bloginfo('template_url') ?>/img/hero-slider/1.jpg');">
 		
 		<div class="container">
-				<h4 class="mt-4" style="color: #fff;text-align: center;">नेपालको <span class='numscroller' data-min='1' data-max='52' data-delay='5' data-increment='10'>52</span> पत्रिका मा प्रकाशित टेण्डर हेर्न subscribe गर्नु होला ।</h4>
+				<h4 class="mt-4" style="color: #fff;text-align: center;">नेपालको <span class='numscroller' data-min='1' data-max='52' data-delay='5' data-increment='10'>52</span> पत्रिका मा प्रकाशित टेण्डर हेर्न <a href="#" data-toggle="modal" data-target="#register_Modal" data-dismiss="modal">subscribe</a> गर्नु होला ।</h4>
 
 				<div class="row mt-5 main-sr-box">
 					<div class="col-md-12">
 						
-						<span class="sp-title"><a href="<?= home_url(); ?>/tender-by-category#newspapers">NEWSPAPERS</a></span>
+						<!-- <span class="sp-title"><a href="<?= home_url(); ?>/tender-by-category#newspapers">NEWSPAPERS</a></span>
 						<span class="sp-title ml-1"><a href="<?= home_url(); ?>/tender-by-category#industries">INDUSTRY</a></span>
-						<span class="sp-title ml-1"><a href="<?= home_url(); ?>/tender-by-category#products">PRODUCTS</a></span>
+						<span class="sp-title ml-1"><a href="<?= home_url(); ?>/tender-by-category#products">PRODUCTS</a></span> -->
+
+						<ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: -15px;">
+						  <li class="nav-item">
+						    <a class="nav-link active" id="home-tab1" data-toggle="tab" href="#newspapers" role="tab" aria-controls="home" aria-selected="true">NEWSPAPERS</a>
+						  </li>
+						  <li class="nav-item">
+						    <a class="nav-link" id="home-tab2" data-toggle="tab" href="#industries" role="tab" aria-controls="home" aria-selected="false">INDUSTRIES </a>
+						  </li>
+						  <li class="nav-item">
+						    <a class="nav-link" id="home-tab2" data-toggle="tab" href="#products" role="tab" aria-controls="home" aria-selected="false">Products </a>
+						  </li>
+						</ul>
 					</div>
-					<div class="tabcontents">
+					<div class="tabcontents" id="myTabContent">
 						<div id="search-box">
 							<form action="<?= home_url(); ?>/search" method="get">
 							<input type="text" name="s" class="col-md-8" placeholder="Enter Keyword For Ex. Tender Name ">
@@ -49,7 +111,39 @@ if($_GET['s']){
 
 	<!-- Why Section end -->
 	<section class="why-section pb-4">
+		<?php  
+          if (isset($_GET['register'])){
+          $register = $_GET['register'];  
+         
+          if($register == true) { 
+                        echo '<div class="alert alert-success">Check your email and set the password!</div>'; 
+                        }else{
+                        	echo '<div class="alert alert-warning">Please provide a unique username or email address!</div>';
+                        }
+                       }
+                      //    else {
+
+                      //   echo '<div class="alert alert-warning">Please provide a unique username or email address!</div>';
+                      // }
+                      ?>
+
+
+
 		<div class="container">
+
+			<?php
+			// $user_id = get_current_user_id();
+			// $user = get_user_meta( $user_id );
+			// // echo '<pre>';
+			// // print_r($user);
+
+			// $email_list = get_user_meta( $user_id, 'schedule_email', true );
+			// $email_list_string = implode( $email_list, ', ' );
+
+			// echo $email_list_string;
+			// echo '</pre>';
+
+			?>
 			<div class="text-center mb-4 pb-2">
 				<h2>Newspapers</h2>
 			</div>
@@ -61,16 +155,33 @@ $terms = get_terms(
     array(
         'taxonomy'   => 'newspapers',
         'hide_empty' => false,
+        'parent' => 0
+        // 'post__in'       => [2,3,7],
+    	// 'orderby'        => 'post__in',
+    	// 'order'          => 'ASC'
     )
 );
 
 // Check if any term exists
 if ( ! empty( $terms ) && is_array( $terms ) ) {
     // Run a loop and print them all
-    foreach ( $terms as $term ) { 
-    	// $cat_image = get_field('category_image', $term);
+    foreach ( $terms as $parent ) { 
+    	// $cat_image = get_field('category_image', $term); ?>
+
+
+<?php $terms1 = get_terms(
+array(
+'taxonomy'   => 'newspapers',
+'hide_empty' => false,
+'parent' => $parent->term_id 
+
+)
+);
+
+foreach ($terms1 as $term) {
+	
 ?>
-				<div class="col-md-2">
+				<div class="col-md-2 col-sm-12 col-xs-12">
 					<div class="icon-box-item">
 						<div class="row">
 						<div class="ib-icon">
@@ -78,7 +189,7 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 							<?php 
 							if ( z_taxonomy_image_url($term->term_id) ){
 							?>
-							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" ></a>
+							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" width="180" height="120" style="padding: 15px"></a>
 						<?php }else{ ?>
 							<i class="flaticon-012-24-hours"></i>
 						<?php } ?>
@@ -91,6 +202,7 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 				</div>
 
 <?php
+			}
  		}
 	}
 ?>
@@ -111,6 +223,36 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 	<section class="cta-section set-bg" data-setbg="<?php bloginfo('template_url') ?>/img/cta-bg.jpg">
 		<div class="container">
 			<h2>Latest <strong>Tenders</strong> Online </h2>
+			
+			<div class="row">
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				  <li class="nav-item">
+				    <a class="nav-link active" id="home-tab1" data-toggle="tab" href="#list_view" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-list"></i> </a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" id="home-tab2" data-toggle="tab" href="#card_view" role="tab" aria-controls="home" aria-selected="false"><i class="fa fa-th-large"></i> </a>
+				  </li>
+			</ul>
+			</div>
+
+			<div class="row card tab-content" id="myTabContent">
+				<div class="tab-pane fade show active" id="list_view" role="tabpanel" aria-labelledby="home-tab1">
+					<div class="row p-3">
+					<?php
+					get_template_part( 'template-parts/content', 'home-list' );
+					?>
+					</div>
+				</div>
+
+				<div class="tab-pane fade" id="card_view" role="tabpanel" aria-labelledby="home-tab1">
+					<div class="row p-3">
+					<?php
+					get_template_part( 'template-parts/content', 'home-card' );
+					?>
+					</div>
+				</div>
+			</div>
+		
 			<div class="row">
 			<?php 
 			$args = array (
@@ -123,6 +265,7 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 			// echo '<pre>';
 			// 	print_r($cat_posts);
 			// echo '</pre>';
+			$im = 1;
 			if ( $cat_posts->have_posts() ) : while ( $cat_posts->have_posts() ) : $cat_posts->the_post();
 				$cat_id = get_the_ID();
 				$cat_names = $paper_names = $ind_names = $published_date = $expiry = '-';
@@ -170,7 +313,10 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 			$expiry = get_post_meta( $cat_id, 'expiry_date' , true );
 
 			$today = new DateTime(date("Y-m-j"));
-
+			if($p_date){
+		        $sd = DateTime::createFromFormat( "Y-m-d", $p_date )->settime(0,0);
+		        $diff = $today->diff($sd)->format("%R%a");
+			}
 			?>
 			<!-- <div class="col-md-6 col-sm card mt-3 mb-3 posts ">
 				<div class="row">
@@ -224,7 +370,7 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 					<?php if (has_post_thumbnail()) : 
 							if( is_user_logged_in() ) : 
 						?>
-					<figure> <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'post-thumbnail-main')); ?></a> </figure>
+					<figure> <a href="" data-toggle="modal" data-target="#image_modal<?= $im;?>"><?php the_post_thumbnail('thumbnail', array('class' => 'post-thumbnail-main')); ?></a> </figure>
 					<?php else: ?>
 						<figure> <a href="#" data-toggle="modal" data-target="#login_Modal"><?php the_post_thumbnail('thumbnail', array('class' => 'post-thumbnail-main')); ?></a> </figure>
 					<?php endif; ?>
@@ -259,33 +405,73 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 
 						</div>
 						<div class="col-md-12">
-							<small><?php echo mb_strimwidth(get_the_content(), 0, 40, '...'); ?></small>
+							<small><?php //echo mb_strimwidth(get_the_content(), 0, 40, '...'); ?></small>
 						</div>
 					</div>
 					
 					<div class="row">
+						<div class="col-md-6" style="overflow: hidden;">
+							<div class="row">
+
 						<div class="col-md-12">
-						<p>
+						<p class="p_list">
 							<span class="float-left"><i class="fa fa-list-ul "></i></span>
-							<span class="ml-4 float-left"><span><?= $cat_names; ?></span></span>	
+							<span class="ml-4 float-left"><span><?= wp_trim_words($cat_names, 15, '..') ?></span></span>	
 						</p></div>
 						<div class="col-md-12">
-						<p class="">
+						<p class="p_list">
 							<span class="float-left"><i class="fa fa-paper-plane"></i></span>
-							<span class="ml-4 float-left"><span><?= $paper_names; ?></span></span>	
+							<span class="ml-4 float-left"><span><?= mb_strimwidth($paper_names, 0, 25, '...'); ?></span></span>	
 						</p></div>
 
 						<div class="col-md-12">
-						<p class="">
+						<p class="p_list">
 							<span class="float-left"><i class="fa fa-calendar"></i></span>
 							<span class="ml-4 float-left"><span><?= $published_date; ?></span></span>	
 						</p></div>
 						<div class="col-md-12">
-						<p class="">
+						<p class="p_list">
 							<span class="float-left"><i class="fa fa-calendar" style="color: red;"></i></span>
 							<span class="ml-4 float-left"><span><?= $expiry; ?></span></span>	
 						</p></div>
-					</div>
+</div>
+</div>
+<div class="col-md-6" style="border-left: 1px dashed lightgrey;">
+	<?php echo mb_strimwidth(get_the_content(), 0, 110, '...'); ?>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="image_modal<?= $im;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><?= the_title(); ?></h5>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	<?php
+        if ( has_post_thumbnail() ) {
+				    the_post_thumbnail( 'full' );
+				}else{
+					echo "No Image Found";
+				}
+
+				?>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php if (current_user_can('administrator')) 
+{
+edit_post_link( esc_html__( 'Edit', 'oria' ), '<span class="edit-link">', '</span>' ); 
+} ?>
+					</div> <!-- main row -->
 					
 				</div>
 			
@@ -293,8 +479,14 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 				</div>
 			</div> 
 
-		<?php endwhile;endif; ?>
+		<?php $im++; endwhile;endif; ?>
 			</div>
+
+			<div class="text-center pt-3">
+				<a href="<?= home_url()?>/listall" class="site-btn sb-big">More Tenders</a>
+			</div>
+
+
 		</div>
 	</section>
 	<!-- CTA Section end -->
@@ -345,4 +537,4 @@ if ( ! empty( $terms ) && is_array( $terms ) ) {
 
 
 
-<?php// } ?>
+<?php } ?>

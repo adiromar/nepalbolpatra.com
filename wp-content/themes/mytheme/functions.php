@@ -1,7 +1,16 @@
 <?php 
 use PHPMailer\PHPMailer\PHPMailer;
 
+// using php default session
+function tatwerat_startSession() {
+    if(!session_id()) {
+        session_start();
+    }
+}
 
+add_action('init', 'tatwerat_startSession', 1);
+
+// thumbnails
 add_theme_support( 'post-thumbnails' );
 set_post_thumbnail_size( 50, 50 ); 
 
@@ -27,7 +36,7 @@ function custom_meta_box_markup($object)
             <input id="datepicker1" name="published_date" type="text" value="<?php echo get_post_meta($object->ID, "published_date", true); ?>" placeholder="PublishedDate" class="form-control nepali-calendar" autocomplete="off" required>
         </div>
         <br>
-        <div class="col-md-12">
+        <div class="col-md-12" style="margin-bottom: 155px;">
         	<label>Last Date of Submission <span style="color: red"><b>*</b>:</label>
             <input id="nepaliDate" name="expiry_date" type="text" value="<?php echo get_post_meta($object->ID, "expiry_date", true); ?>" placeholder="Expiry Date" class="form-control nepali-calendar">
             <input type="text" name="submission_date_eng" id="englishDate" class="form-control" value="<?php echo get_post_meta($object->ID, "submission_date_eng", true); ?>" placeholder="English Date" autocomplete="off" readonly>
@@ -284,7 +293,7 @@ add_action('edit_user_profile', 'extra_user_profile_fields');
 function extra_user_profile_fields( $user ) { ?>
 	<?php
 	global $wpdb;
-	$res = $wpdb->get_results("SELECT * FROM wp_addproduct",ARRAY_A);
+	/*$res = $wpdb->get_results("SELECT * FROM wp_addproduct",ARRAY_A);
             foreach($res as $data)
               { ?>
                 <div style="padding-left:50px;">
@@ -293,25 +302,91 @@ function extra_user_profile_fields( $user ) { ?>
 		</label>
 		<strong><?php echo $data['product_name'] ;?></strong>
 		</div>
-		<?php } 
+		<?php }*/ 
+		?>
 
+		<div class="row">
+			<div class="col-md-3 col-sm-12 cat-field-plug">
+			<legend>Newspapers: </legend>
+
+		<?php	
 		// new terms or category lists
 		$terms = get_terms( array(
-    		'taxonomy' => 'products',
+    		'taxonomy' => 'newspapers',
     		'hide_empty' => false,
-		) );
-
+		) ); 
+		// print_r($terms);
 		foreach ($terms as $data) { ?>
-			<div style="padding-left:50px;">
+			<div class="col-md-12 col-sm-12">
 		<label>
-			<input type="checkbox" name="<?php echo $data->name ;?>" value="1">
+			<input type="checkbox" name="<?php echo $data->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$data->slug, $user->ID ) == 1 ) echo "checked"; ?>>
 			<strong><?php echo $data->name ;?></strong>
 		</label>
 		
 		</div>
-		<?php }
+		<?php } ?>
+		</div>
 
-}
+		<div class="col-md-3 col-sm-12 cat-field-plug">
+			<legend>Category:</legend>
+			<?php
+			$category = get_categories();
+
+			foreach ($category as $cat) { ?>
+				<div class="col-md-12 col-sm-12">
+					<label>
+					<input type="checkbox" name="<?php echo $cat->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$cat->slug, $user->ID ) == 1 ) echo "checked"; ?>>
+					<strong><?php echo $cat->name ;?></strong>
+					</label>
+				</div>
+			<?php } ?>
+		</div>
+
+		<div class="col-md-3 col-sm-12 cat-field-plug">
+			<legend>Products: </legend>
+
+		<?php	
+		// new terms or category lists
+		$terms_p = get_terms( array(
+    		'taxonomy' => 'products',
+    		'hide_empty' => false,
+		) ); 
+		// print_r($terms);
+		foreach ($terms_p as $data) { ?>
+			<div class="col-md-12 col-sm-12">
+		<label>
+			<input type="checkbox" name="<?php echo $data->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$data->slug, $user->ID ) == 1 ) echo "checked"; ?>>
+			<strong><?php echo $data->name ;?></strong>
+		</label>
+		
+		</div>
+		<?php } ?>
+		</div>
+
+		<div class="col-md-3 col-sm-12 cat-field-plug">
+			<legend>Industries: </legend>
+
+		<?php	
+		// new terms or category lists
+		$terms_i = get_terms( array(
+    		'taxonomy' => 'industries',
+    		'hide_empty' => false,
+		) ); 
+		// print_r($terms);
+		foreach ($terms_i as $data) { ?>
+			<div class="col-md-12 col-sm-12">
+		<label>
+			<input type="checkbox" name="<?php echo $data->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$data->slug, $user->ID ) == 1 ) echo "checked"; ?>>
+			<strong><?php echo $data->name ;?></strong>
+		</label>
+		
+		</div>
+		<?php } ?>
+		</div>
+
+	</div>
+
+<?php }
 
 add_action( 'personal_options_update', 'save_extra_user_profile_fields' );
 add_action( 'edit_user_profile_update', 'save_extra_user_profile_fields' );
@@ -350,6 +425,7 @@ function create_topics_hierarchical_taxonomy() {
     'labels' => $labels,
     'show_ui' => true,
     'show_admin_column' => true,
+    'show_in_rest' => true,
     'query_var' => true,
     'rewrite' => array( 'slug' => 'product' ),
   ));
@@ -382,6 +458,7 @@ function create_topics_hierarchical_taxonomy1() {
     'labels' => $labels,
     'show_ui' => true,
     'show_admin_column' => true,
+    'show_in_rest' => true,
     'query_var' => true,
     'rewrite' => array( 'slug' => 'newspaper' ),
   ));
@@ -414,11 +491,14 @@ function create_topics_hierarchical_taxonomy_industry() {
     'labels' => $labels,
     'show_ui' => true,
     'show_admin_column' => true,
+    'show_in_rest' => true,
     'query_var' => true,
     'rewrite' => array( 'slug' => 'industry' ),
   ));
  
 }
+
+
 
 //update User's "INTEREST FIELD" as per their profile-setting
 function save_extra_user_profile_fields( $user_id )
@@ -426,12 +506,44 @@ function save_extra_user_profile_fields( $user_id )
 	if( !current_user_can( 'edit_user', $user_id ) ) 
 	require_once('../../../wp-load.php');
  	global $wpdb;
-	$res = $wpdb->get_results("SELECT * FROM wp_addproduct",ARRAY_A);
-	        foreach($res as $data)
-	        {
-	            update_user_meta( $user_id, 'interest-' .$data['product_name'], $_POST[$data['product_name']] );
-	        }
 
+	// $res = $wpdb->get_results("SELECT * FROM wp_addproduct",ARRAY_A);
+	//         foreach($res as $data)
+	//         {
+	//             update_user_meta( $user_id, 'interest-' .$data['product_name'], $_POST[$data['product_name']] );
+	//         }
+
+ 		// newspapers
+		$terms = get_terms( array(
+    		'taxonomy' => 'newspapers',
+    		'hide_empty' => false,
+		) );
+		foreach ($terms as $data) {
+			update_user_meta( $user_id, 'interest-' .$data->slug, $_POST[$data->slug] );
+		}
+		// category
+		$category = get_categories();
+		foreach ($category as $cat) {
+			update_user_meta( $user_id, 'interest-' .$cat->slug, $_POST[$cat->slug] );
+		}
+
+		// industries
+		$terms_i = get_terms( array(
+    		'taxonomy' => 'industries',
+    		'hide_empty' => false,
+		) );
+		foreach ($terms_i as $data) {
+			update_user_meta( $user_id, 'interest-' .$data->slug, $_POST[$data->slug] );
+		}
+
+		// products
+		$terms_p = get_terms( array(
+    		'taxonomy' => 'products',
+    		'hide_empty' => false,
+		) );
+		foreach ($terms_p as $data) {
+			update_user_meta( $user_id, 'interest-' .$data->slug, $_POST[$data->slug] );
+		}
 // 	update_user_meta( $user_id, 'interest-architectural', $_POST['architectural'] );
 // 	update_user_meta( $user_id, 'interest-auction', $_POST['auction'] );
 // 	update_user_meta( $user_id, 'interest-estate', $_POST['estate'] );
@@ -859,11 +971,70 @@ add_action( 'pre_get_posts', function($q) {
     }
 });
 
+// remove is singular
+// add_filter('redirect_canonical','pif_disable_redirect_canonical');
+
+// function pif_disable_redirect_canonical($redirect_url) {
+//     if (is_singular()) $redirect_url = false;
+// return $redirect_url;
+// }
+
+
+// Featured post function
+function sm_custom_meta() {
+    add_meta_box( 'sm_meta', __( 'Featured Posts', 'sm-textdomain' ), 'sm_meta_callback', 'post' );
+}
+function sm_meta_callback( $post ) {
+    $featured = get_post_meta( $post->ID );
+?>
+<p>
+  	<div class="sm-row-content">
+        <label for="meta-checkbox">
+            <input type="checkbox" name="meta-checkbox" id="meta-checkbox" value="yes" <?php if ( isset ( $featured['meta-checkbox'] ) ) checked( $featured['meta-checkbox'][0], 'yes' ); ?> />
+            <?php _e( 'Featured this post', 'sm-textdomain' )?>
+        </label>
+        
+    </div>
+</p>
+ 
+    <?php
+}
+add_action( 'add_meta_boxes', 'sm_custom_meta' );
+/**
+ * Saves the custom meta input
+ */
+function sm_meta_save( $post_id ) {
+ 
+    // Checks save status
+    $is_autosave = wp_is_post_autosave( $post_id );
+    $is_revision = wp_is_post_revision( $post_id );
+    $is_valid_nonce = ( isset( $_POST[ 'sm_nonce' ] ) && wp_verify_nonce( $_POST[ 'sm_nonce' ], basename( __FILE__ ) ) ) ? 'true' : 'false';
+ 
+    // Exits script depending on save status
+    if ( $is_autosave || $is_revision || !$is_valid_nonce ) {
+        return;
+    }
+  // Checks for input and saves
+if( isset( $_POST[ 'meta-checkbox' ] ) ) {
+    update_post_meta( $post_id, 'meta-checkbox', 'yes' );
+} else {
+    update_post_meta( $post_id, 'meta-checkbox', '' );
+}
+ 
+}
+add_action( 'save_post', 'sm_meta_save' );
+
+
+
+
+/*
+wpbeginner pagination
+*/
 function wpbeginner_numeric_posts_nav() {
  
-    if( is_singular() )
-        return;
- 
+    // if( is_singular() )
+    //     return;
+
     global $query;
  
     /** Stop execution if there's only 1 page */
@@ -927,4 +1098,336 @@ function wpbeginner_numeric_posts_nav() {
     echo '</ul></div>' . "\n";
  
 }
+
+/*
+	==========================================================
+		Custom Login function: by CUBIQ
+	==========================================================
+*/
+/**
+ * Redirect to the custom login page
+ */
+function cubiq_login_init () {
+	$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'login';
+
+	if ( isset( $_POST['wp-submit'] ) ) {
+		$action = 'post-data';
+	} else if ( isset( $_GET['reauth'] ) ) {
+		$action = 'reauth';
+	}
+
+	// redirect to change password form
+	// if ( $action == 'rp' || $action == 'resetpass' ) {
+	// 	if( isset($_GET['key']) && isset($_GET['login']) ) {
+	// 		$rp_path = wp_unslash(home_url('/login/'));
+	// 		$rp_cookie	= 'wp-resetpass-' . COOKIEHASH;
+	// 		$value = sprintf( '%s:%s', wp_unslash( $_GET['login'] ), wp_unslash( $_GET['key'] ) );
+	// 		setcookie( $rp_cookie, $value, 0, $rp_path, COOKIE_DOMAIN, is_ssl(), true );
+	// 	}
+	//
+	// 	wp_redirect( home_url('/login/?action=resetpass') );
+	// 	exit;
+	// }
+
+	// redirect from LOST PASSWORD page
+	if ( $action == 'lostpassword' )
+	{
+		// wp_redirect( home_url( '/login' ) );
+		wp_redirect( home_url( '/?a=lostpassword' ) );
+	}
+
+	//redirect from REGISTER PAGE
+	if ( $action == 'register' )
+	{
+		// wp_redirect( home_url( '/login' ) );
+		wp_redirect( home_url( '/?a=register' ) );
+	}
+
+	// redirect from wrong key when resetting password
+	if ( $action == 'lostpassword' && isset($_GET['error']) && ( $_GET['error'] == 'expiredkey' || $_GET['error'] == 'invalidkey' ) ) {
+		// wp_redirect( home_url( '/login/?action=forgot&failed=wrongkey' ) );
+		wp_redirect( home_url( '/?a=forgot&failed=wrongkey' ) );
+		exit;
+	}
+
+	if (
+		$action == 'post-data'		||			// don't mess with POST requests
+		$action == 'reauth'			||			// need to reauthorize
+		$action == 'logout'						// user is logging out
+	) {
+		return;
+	}
+
+	// wp_redirect( home_url( '/login/' ) );
+	// exit;
+}
+add_action('login_init', 'cubiq_login_init');
+
+/**
+ * Redirect logged in users to the right page
+ */
+function cubiq_template_redirect () {
+	if ( is_page( 'login' ) && is_user_logged_in() ) {
+		wp_redirect( home_url(  ) );
+		exit();
+	}
+
+	if ( is_page( 'user' ) && !is_user_logged_in() ) {
+		// wp_redirect( home_url( '/login/' ) );
+		wp_redirect( home_url( '/?a=login' ) );
+		exit();
+	}
+}
+add_action( 'template_redirect', 'cubiq_template_redirect' );
+
+
+/**
+ * Prevent subscribers to access the admin
+ */
+function cubiq_admin_init () {
+
+	if ( current_user_can( 'subscriber' ) && !defined( 'DOING_AJAX' ) ) {
+		// wp_redirect( home_url('/login/') );
+		wp_redirect( home_url( '/?a=login' ) );
+		exit;
+	}
+}
+add_action( 'admin_init', 'cubiq_admin_init' );
+
+/**
+ * Login page redirect
+ */
+function cubiq_login_redirect ($redirect_to, $url, $user) {
+
+	if ( !isset($user->errors) ) {
+		return $redirect_to;
+	}
+
+	// if ( $_POST['action'] == 'rp' )
+	// {
+	// 	return $redirect_to;
+	// } else {
+	// }
+	wp_redirect( home_url( '/?a=login' ));
+	exit;
+}
+add_filter('login_redirect', 'cubiq_login_redirect', 10, 3);
+
+
+/**
+ * Send users a notification of new grower posts 
+ */
+function notify_growers($post) {
+// Only notify for grower posts
+if ( $post->post_type != 'post' ) return;
+
+$post_id = $post->ID;
+
+$papers = wp_get_post_terms( $post_id, 'newspapers'); 
+	$papc = count($papers);
+	$ppnames = array();
+	for ($i=0; $i < $papc; $i++) { 
+		$papname = $papers[$i]->slug;
+		$ppnames[] = $papname;
+	}
+	$paper_names = implode(', ', $ppnames);
+
+	$paper_names = explode(', ', $paper_names);
+
+foreach ($paper_names as $paper) {
+	// echo $paper;
+	add_to_schedule_email( $paper, $post_id );
+}
+
+// $user_id = get_current_user_id();
+// $user = get_userdata( $user_id );
+
+// $email_content[] = '74';
+// update_user_meta( $user->{'ID'}, 'schedule_email', $email_content );
+
+}
+add_action( 'draft_to_publish', 'notify_growers' );
+add_action( 'new_to_publish', 'notify_growers' );
+
+
+
+
+
+// function js_enqueue_scripts() {
+//     wp_enqueue_script ("my-ajax-handle", get_stylesheet_directory_uri() . "/assets/js/ajax.js", array('jquery')); 
+//     //the_ajax_script will use to print admin-ajaxurl in custom ajax.js
+//     wp_localize_script('my-ajax-handle', 'the_ajax_script', array('ajaxurl' =>admin_url('admin-ajax.php')));
+// } 
+// add_action("wp_enqueue_scripts", "js_enqueue_scripts");
+
+
+// add_action('wp_ajax_call_post', 'call_post');
+// add_action('wp_ajax_nopriv_call_post', 'call_post');
+
+function call_post(){
+
+    // Getting the ajax data:
+    // An array of keys("name")/values of each "checked" checkbox
+    $choices = $_POST['choices'];
+    // print_r($choices);
+
+    $meta_query = array('relation' => 'OR');
+    foreach($choices as $Key=>$Value){
+
+        if(count($Value)){
+            foreach ($Value as $Inkey => $Invalue) {
+                $meta_query[] = array( 'key' => $Key, 'value' => $Invalue, 'compare' => '=' );
+            }
+        }
+    }
+    $args = array(
+        'post_type' => 'post',
+        'meta_query' =>$meta_query
+    );
+
+    $query = new WP_Query($args);
+     //if( ! empty ($params['template'])) {
+         ////$template = $params['template'];
+         if( $query->have_posts() ) :
+             while( $query->have_posts() ): $query->the_post();
+             	echo "hello world !!";
+                 get_template_part('content');
+             endwhile;
+             wp_reset_query();
+         else :
+             wp_send_json($query->posts);
+         endif;
+     //}
+
+    // die();
+}
+
+
+function my_enqueue() {
+
+    wp_enqueue_script( 'ajax-script', get_template_directory_uri() . '/js/my-ajax-script.js', array('jquery') );
+
+    wp_localize_script( 'ajax-script', 'my_ajax_object',
+            array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+}
+add_action( 'wp_enqueue_scripts', 'my_enqueue' );
+
+
+
+
+/*
+	==========================================================
+		Add subpage to Users for Contact form
+	==========================================================
+*/
+add_action('admin_menu', 'edit_user_subscriptions');
+function edit_user_subscriptions()
+{
+	// add_users_page( $page_title, $menu_title, $capability, $menu_slug, $function);
+	add_users_page( 'View Contact Form', 'View Contact Records', 'edit_users', 'user_records', 'edit_subscription_contents' );
+}
+
+function edit_subscription_contents(){
+if(!current_user_can('edit_users')){
+	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+}	//end if user is allowed.
+	//add any form processing code here in PHP:
+	$users = get_users();
+	// var_dump( $users );
+	// echo $users[0]->{'ID'};
+	global $wpdb;
+	$table="wp_contactus";
+	$res = $wpdb->get_results("SELECT * FROM wp_contactus ORDER BY id desc",ARRAY_A);
+	?>
+
+<div style="margin-top: 14px;">
+	<h2>Contact Form Records:</h2>
+	<table class="wp-list-table widefat fixed striped users"  style="padding: 8px;">
+		<thead>
+			<th width="5%">S.N.</th>
+			<th>Company Name</th>
+			<th>Contact Name</th>
+			<th>Email</th>
+			<th>Phone Number</th>
+			<th>Tender Name</th>
+			<th>Tender Link</th>
+			<th>Urgency</th>
+			<th>Insert Date</th>
+		</thead>
+		<tbody>
+			<?php
+			$kk = 1;
+			foreach ($res as $data) {
+				echo '<tr>';
+				echo '<td>'.$kk.'</td>';
+				echo '<td>'.$data['company_name'].'</td>';
+				echo '<td>'.$data['contact_name'].'</td>';
+				echo '<td>'.$data['email'].'</td>';
+				echo '<td>'.$data['phone_no'].'</td>';
+				echo '<td>'.$data['tender_name'].'</td>';
+				echo '<td>'.$data['tender_link'].'</td>';
+				echo '<td>'.$data['urgency'].'</td>';
+				echo '<td>'.$data['inserted_date'].'</td>';
+				// echo '<td><a href="#" class="btn_del" id="'.$data['id'].'">Delete</a></td>';
+				echo '</tr>';
+
+			$kk++; } ?>
+		</tbody>
+	</table>
+<script src="<?php bloginfo('template_url') ?>/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".btn_del").click(function() {
+		rec_id = this.id;
+
+  		var r=confirm("Confirm Delete this Data?")
+        if (r==true)
+        	<?php delete_qq() ?>
+        	<?php //global $wpdb;$wpdb->query('DELETE * FROM wp_contactus WHERE id = 1'); ?>
+          window.location = url+"?id="+rec_id;
+      
+        else
+          return false;
+	});
+});
+
+// jQuery(document).on('click', '.btn_del', function () {
+//     var id = this.id;
+//     jQuery.ajax({
+//         type: 'POST',
+//         url: ajaxurl,
+//         data: {"action": "delete_row", "element_id": id},
+//         success: function (data) {
+//             //run stuff on success here.  You can use `data` var in the 
+//            //return so you could post a message.  
+//         }
+//     });
+// });
+
+
+</script>
+</div>
+<?php
+}
+// ends here
+
+function delete_qq(){
+	global $wpdb;
+	$wpdb->query('DELETE * FROM wp_contactus WHERE id = 1');
+}
+function delete_row() {
+    $id = explode('_', sanitize_text($_POST['element_id']));
+    if (wp_verify_nonce($id[2], $id[0] . '_' . $id[1])) {
+                $table = 'wp_contactus';
+        $wpdb->delete( $table, array( 'id' => $id[1] ) );
+
+        echo 'Deleted post';
+        die;
+    } else {
+        echo 'Nonce not verified';
+        die;
+    }
+}
+add_action('wp_ajax_your_delete_action', 'delete_row');
+add_action( 'wp_ajax_nopriv_your_delete_action', 'delete_row');
 ?>

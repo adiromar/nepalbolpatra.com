@@ -1,4 +1,4 @@
-/* =================================
+ =================================
 ------------------------------------
   LOANS2GO | Loans HTML Template
   Version: 1.0
@@ -332,8 +332,8 @@ Commom elements
 }
 
 .icon-box-item .ib-icon {
-	width: 126px;
-	height: 116px;
+	/*width: 126px;*/
+	/*height: 116px;*/
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
@@ -346,12 +346,28 @@ Commom elements
 	font-size: 39px;
 	color: #f43f00;
 	border: 1px solid #f43f00;
-	border-radius: 50%;
+	/*border-radius: 50%;*/
 	float: left;
 	margin-right: 20px;
 	-webkit-transition: all 0.4s;
 	transition: all 0.4s;
+	overflow-x: hidden;
 }
+
+.cat-lists a:hover img{
+	background-color: darkorange;
+	opacity: 0.5;
+	transition: opacity .25s ease-in-out;
+	  -moz-transition: opacity .25s ease-in-out;
+	  -webkit-transition: opacity .25s ease-in-out;
+}
+.icon-box-item .ib-icon:hover img{
+	/*background-color: darkorange;*/
+	opacity: 0.5;
+	transition: opacity .25s ease-in-out;
+	  -moz-transition: opacity .25s ease-in-out;
+	  -webkit-transition: opacity .25s ease-in-out;
+	}
 
 .icon-box-item .ib-text {
 	overflow: hidden;
@@ -367,7 +383,12 @@ Commom elements
 	background-color: #f43f004f;
 	color: #fff;
 }
-
+.ib-text h5 a:hover .icon-box-item{
+	opacity: 0.5;
+	transition: opacity .25s ease-in-out;
+	  -moz-transition: opacity .25s ease-in-out;
+	  -webkit-transition: opacity .25s ease-in-out;
+}
 /* Preloder */
 
 #preloder {
@@ -446,6 +467,7 @@ Header section
 	/*background: rgba(0, 0, 0, 0.7);*/
 	background-color: #fff;
 	z-index: 999;
+	border-bottom: 2px solid lightgrey;
 }
 
 .header-nav {
@@ -474,7 +496,8 @@ Header section
 	color: #313038;
 	font-weight: 600;
 	padding: 33px 5px;
-	margin-right: 55px;
+	/*margin-right: 55px;*/
+	margin-right: 12px;
 }
 
 .main-menu li a:hover,
@@ -1803,7 +1826,44 @@ div.tabcontents {
 .fa-red{
 	color: red;
 }
+.p_list span{
+	color: black;
+	font-weight: 600;
+}
 
+.tax-heading{
+	background: #0070b8;
+    border-color: #0070b8;
+    text-align: center;
+    padding: 4px;
+}
+.tax-heading h4{
+	color: #fff;
+}
+
+.cat-field-plug{
+	background-color: lightblue;
+    border-right: 15px solid #fff;
+    border-radius: 15px;
+    padding-top: 12px;
+}
+
+.profile-hf-left{
+	background: lightblue;
+    padding: 20px 25px;
+    border-radius: 12px;
+}
+.profile-hf-right{
+	border-left: 10px solid white;
+    background: lightblue;
+    border-radius: 12px;
+    padding: 20px 25px;
+}
+.alert-bx{
+	background-color: #ed450a;
+	padding: 9px;
+	color: #fff;
+}
 /* paginations */
 .page-numbers{
 	list-style: none;
@@ -1844,3 +1904,48 @@ div.tabcontents {
     background-color: #3C8DC5;
 }
 /* pagination ends */
+
+/* snackbar or toast */
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+/* snackbar / toast ends 
+

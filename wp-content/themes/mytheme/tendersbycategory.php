@@ -27,8 +27,16 @@ get_header();
 		<div class="row">
 			
 				<?php
-				$category = get_categories();
+				$args = array(
+					'hide_empty' => false,
+				);
 
+				$category = get_categories($args);
+				// $category = wp_list_categories($args);
+
+				// echo '<pre>';
+				// 	print_r($category);
+				// echo '</pre>';die;
 				// print_r($term);
 				echo '<h6 class="col-md-12 col-sm ">Category<hr></h6>';
 				foreach ($category as $val) {
@@ -37,10 +45,10 @@ get_header();
 							echo '<div class="col-md-12">';
 						if ( z_taxonomy_image_url($term->term_id) ){
 							?>
-							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" width="90" height="90"></a>
+							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" width="180" height="120"></a>
 							
 							<?php }else{ ?>
-								<a href="<?= get_category_link($val->term_id) ?>"><img src="<?= get_template_directory_uri() ?>/img/unnamed.png" class="post-thumbnail-mains mb-3" width="90" height="90"></a>
+								<a href="<?= get_category_link($val->term_id) ?>"><img src="<?= get_template_directory_uri() ?>/img/unnamed.png" class="post-thumbnail-mains mb-3" width="180" height="120"></a>
 						<?php } 
 							echo '</div>';
 							echo '<div class="col-md-12 cat-list">';
@@ -80,10 +88,10 @@ get_header();
 							echo '<div class="col-md-12">';
 							if ( z_taxonomy_image_url($term->term_id) ){
 							?>
-							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" width="90" height="90"></a>
+							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" width="180" height="120"></a>
 							
 							<?php }else{ ?>
-								<img src="<?= get_template_directory_uri() ?>/img/unnamed.png" class="post-thumbnail-mains mb-3" width="90" height="90">
+								<img src="<?= get_template_directory_uri() ?>/img/unnamed.png" class="post-thumbnail-mains mb-3" width="180" height="120">
 						<?php } 
 							echo '</div>';
 
@@ -107,5 +115,5 @@ get_header();
 </section>
 
 
-
+<script src="<?php bloginfo('template_url') ?>/js/jquery-3.2.1.min.js"></script>
  <?php get_footer(); ?>

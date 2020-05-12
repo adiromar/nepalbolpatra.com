@@ -69,7 +69,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="<?php bloginfo('template_url') ?>/js/bootstrap.min.js"></script>
 	<script src="<?php bloginfo('template_url') ?>/js/jquery.slicknav.min.js"></script>
 	<script src="<?php bloginfo('template_url') ?>/js/owl.carousel.min.js"></script>
-	<script src="<?php bloginfo('template_url') ?>/js/jquery-ui.min.js"></script>
+	<!-- <script src="<?php bloginfo('template_url') ?>/js/jquery-ui.min.js"></script> -->
 	<script src="<?php bloginfo('template_url') ?>/js/main.js"></script>
 
 	<!-- <script src="<?php bloginfo('template_url') ?>/assets/js/ajax.js"></script> -->

@@ -31,7 +31,9 @@ get_header(); ?>
 					<tr>
 						<th>S.N.</th>
 						<th>E-mail Address</th>
+						<th>Transaction Date</th>
 						<th>View Voucher</th>
+						
 					</tr>
 				</thead>
 					<?php 
@@ -47,6 +49,7 @@ get_header(); ?>
 						<tr>
 							<th><?php echo $i; $i++; ?></th>
 							<th><?= $key['email'] ?></th>
+							<th><?= $key['inserted_date']; ?></th>
 							<th>
 							<a href="<?php echo wp_upload_dir()['baseurl'] . '/vouchers/' . $key['voucher'] ?>" target="_blank">
 								<img src="<?php echo wp_upload_dir()['baseurl'] . '/vouchers/' . $key['voucher'] ?>"
@@ -54,6 +57,7 @@ get_header(); ?>
                         			style="max-height: 100px; max-width: 50px; cursor: pointer;">
                     		</a>
 							</th>
+
 						</tr>
 					<?php 
 						}

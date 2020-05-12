@@ -158,20 +158,74 @@ if($p_date){
 					</tr>
 				</table>
 			</div>
-			<?php
-			if ( has_post_thumbnail() ) {
-			    the_post_thumbnail( 'medium_large' );
-			}
 
-			?>
+			<div class="col-md-12 col-sm-12" style="text-align: center;">
+			<?php
+				if ( has_post_thumbnail() ) {
+				    the_post_thumbnail( 'medium_large');
+				} ?>
+
+				
+
+			</div>
+			<div class="col-md-12 col-sm-12 mt-3 mb-3" style="text-align: center;">
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+				 <i class="fa fa-eye"></i> View Image
+				</button>
+			</div>
 		</div>
 		
-		<div class="col-md-12 col-sm">
+		<div class="col-md-12 col-sm" >
 			<?= the_content(); ?>
 		</div>
 		
 
 	</div>
+</div>
+
+<style type="text/css">
+	.zoom {
+  /*padding: 50px;*/
+  /*background-color: green;*/
+  transition: transform .2s;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.zoom:hover {
+  -ms-transform: scale(1.5); /* IE 9 */
+  -webkit-transform: scale(1.5); /* Safari 3-8 */
+  transform: scale(1.5); 
+}
+</style>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><?= the_title(); ?></h5>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      	<?php
+        if ( has_post_thumbnail() ) {
+				    the_post_thumbnail( 'full', array('class' => 'zoom') );
+				}else{
+					echo "No Image Found";
+				}
+
+				?>
+
+
+      </div>
+    </div>
+  </div>
 </div>
 
 

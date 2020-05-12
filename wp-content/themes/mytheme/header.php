@@ -20,7 +20,7 @@
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/flaticon.css"/>
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/slicknav.min.css"/>
 
-  <!-- <link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/animate.css"/> -->
+  <link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/animate.css"/>
 
 	<!-- Main Stylesheets -->
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/style.css"/>
@@ -30,6 +30,7 @@
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
+
 
 </head>
 <body>
@@ -42,17 +43,22 @@
 	<header class="header-section">
 		
 		<a href="<?= home_url(); ?>" class="site-logo">
-			<img src="<?php bloginfo('template_url') ?>/img/Logo1.png" alt="">
+			<img src="<?php bloginfo('template_url') ?>/img/bolpatra_200.png" alt="">
 		</a>
-		<nav class="header-nav">
+		<nav class="header-nav top_menu">
 			<ul class="main-menu">
-				<li><a href="<?= home_url(); ?>" class="active">Home</a></li>
+				<li><a href="<?= home_url(); ?>" class="">Home</a></li>
+        <li><a href="<?= home_url()?>/listall">List all</a></li>
 				<li><a href="<?= home_url()?>/pricing">Pricing</a></li>
+
+        <li><a href="<?= home_url()?>/proposal-writing-solutions">Proposal Writing Solutions</a></li>
+        <li><a href="<?= home_url()?>/business-plan-writing">Business Plan Writing</a></li>
+
 				<li><a href="#"><i class="fa fa-chevron-down"></i> Services</a>
 					<ul class="sub-menu">
-						<li><a href="<?= home_url()?>/addfeatured/"><i class="fa fa-pencil"></i> Featured</a></li>
-						<li><a href="<?= home_url()?>/features/"><i class="fa fa-user"></i> Tender Services</a></li>
-            <li><a href="<?= home_url()?>/notify/"><i class="fa fa-ticket"></i> Vouchers</a></li>
+						<li><a href="<?= home_url()?>/addfeatured"><i class="fa fa-pencil"></i> Featured</a></li>
+						<li><a href="<?= home_url()?>/features"><i class="fa fa-user"></i> Tender Services</a></li>
+            <li><a href="<?= home_url()?>/notify"><i class="fa fa-ticket"></i> Vouchers</a></li>
 					</ul>
 				</li>
 				<li><a href="<?= home_url()?>/tender-by-category">Tenders By Category</a></li>
@@ -76,6 +82,17 @@
             <li><a href="<?= site_url()?>/wp-admin"><i class="fa fa-dashboard"></i> Admin </a></li>
             <li><a href="<?php echo wp_logout_url( home_url() ) ?>"><i class="fa fa-sign-out"></i> Log out</a></li>
           </ul>
+        </li>
+
+
+        <?php
+        elseif($user->roles[0] == 'editor' || $user->roles[0] == 'author' || $user->roles[0] == 'contributor'): ?>
+        <li><a href="#"><i class="fa fa-user"></i> <?= $user_name; ?></a>
+        <ul class="sub-menu">
+                    <li><a href="<?= home_url()?>/user/"><i class="fa fa-user"></i> User Profile</a></li>
+                    <li><a href="<?= site_url()?>/wp-admin"><i class="fa fa-dashboard"></i> Admin </a></li>
+                    <li><a href="<?php echo wp_logout_url( home_url() ) ?>"><i class="fa fa-sign-out"></i> Log out</a></li>
+                  </ul>
         </li>
 
 					<?php else: ?>
@@ -102,6 +119,8 @@
 
 
 	<!-- Login Modal -->
+  <button type="button" data-toggle="modal" id="login_click" data-target="#login_Modal" style="display: none;">Login modal</button>
+
 <div class="modal fade" id="login_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content mdl-content">
@@ -123,7 +142,8 @@
 
         		<div class="col-md-12 mt-2">
         			<input class="loginLoginValue" type="hidden" name="service" value="login" />
-					<input type="hidden" name="redirect_to" value="<?php echo $_SERVER['REQUEST_URI']; ?>" />
+					<!-- <input type="hidden" name="redirect_to" value="<?php echo $_SERVER['REQUEST_URI']; ?>" /> -->
+          <input type="hidden" name="redirect_to" value="<?= home_url(); ?>/listall" />
 					<input type="hidden" name="user-cookie" value="1" />
 					<input type="submit" name="user-submit" id="go" class="form-control auth-btn" value="Authorize">
         		</div>
@@ -139,7 +159,7 @@
 </div>
 <!-- Login Modal ends -->
 
-<button type="button" data-toggle="modal" data-target="#register_Modal">Register modal</button>
+<button type="button" data-toggle="modal" id="register_click" data-target="#register_Modal" style="display: none;">Register modal</button>
 
 	<!-- Register Modal -->
 <div class="modal fade rm" id="register_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,6 +174,12 @@
       <div class="modal-body">
         <form action="<?php echo site_url('wp-login.php?action=register', 'login_post') ?>" method="post" >
         	<div class="row">
+
+            <div class="col-md-12">
+              <input type="text" name="first_name" placeholder="Firstname" value="" class="form-control" required>
+            </div>
+
+
         		<div class="col-md-12">
         			<input type="text" name="user_login" placeholder="Username" value="<?php echo (isset($user_login)) ? esc_attr(stripslashes($user_login)) : ''; ?>" class="form-control" required>
         		</div>
@@ -163,6 +189,7 @@
         		</div>
 
         		<div class="col-md-12 mt-2">
+              <?php do_action('register_form'); ?>
 					<input type="hidden" name="redirect_to" value="<?php echo $_SERVER['REQUEST_URI']; ?>?register=true" />
 					<input type="hidden" name="user-cookie" value="1" />
 					<input type="submit" name="user-submit" id="gos" class="form-control signup-btn" value="Register">
@@ -180,6 +207,8 @@
 <!-- Register Modal ends -->
 
 	<!-- Forgot Password  Modal -->
+  <button type="button" data-toggle="modal" id="lostpwd_click" data-target="#forgot_Modal" style="display: none;">Forgot modal</button>
+
 <div class="modal fade" id="forgot_Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content mdl-content">
@@ -214,3 +243,43 @@
   </div>
 </div>
 <!-- Forgot Password  Modal ends -->
+<?php 
+// if( is_user_logged_in() ) : 
+
+//   // assign session variable
+//   $s = $_SESSION['logged_in'] = 'true'; 
+// if ($s == 'true') :
+  ?>
+
+<script>
+  // $(document).ready(function(){
+  //   $('#clk_this').click();
+  // });
+</script>
+
+  <?php 
+// endif;
+
+// else: 
+//   $_SESSION['logged_in'] = 'false';
+//  endif;
+
+ // echo $_SESSION['logged_in'];
+?>
+<!-- <script src="<?php bloginfo('template_url') ?>/js/jquery-3.2.1.min.js"></script> -->
+
+<!-- <button onclick="myFunction()" id="clk_this">Show Snackbar</button> -->
+
+<!-- <div id="snackbar">Some text some message..</div> -->
+
+<script type="text/javascript">
+//   function myFunction() {
+//   var x = document.getElementById("snackbar");
+//   x.className = "show";
+//   setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000000);
+// }
+</script>
+
+<!-- <div class="alert alert-success">
+  <strong>Success!</strong> Indicates a successful or positive action.
+</div> -->

@@ -1,20 +1,28 @@
 <?php get_header(); 
 
-$user_id = get_current_user_id();
-$user = get_userdata( $user_id );
+if( is_user_logged_in() ) : 
+	$user_id = get_current_user_id();
+	$user = get_userdata( $user_id );
+	if( is_super_admin() ) : 
+		// super admin
+		$max = '3';
+	else:
+		// subscriber, contributor, author, etc
+		$t = get_user_meta($user_id);
+		$subs = $t['user_type'][0];
+		$exp_date = $t['expiration_date'][0];
 
-$t = get_user_meta($user_id);
-$subs = $t['user_type'][0];
-if($user){
-	if($subs == 'trial'){
-		$max = '2';
-	}else{
-		$max = '-1';
-	}
-}else{
+		if($subs == 'paid'){
+			$max = '10';
+		}elseif($subs == 'trial'){
+			$max = '10';
+		}else{
+			$max = '10';
+		}
+	endif;
+else:
 	$max = '2';
-}
-$exp_date = $t['expiration_date'][0];
+endif;
 
 // category
 $currCat = get_category(get_query_var('cat'));
@@ -106,7 +114,7 @@ $tag_id = $current_page->term_id;
                 'order'         => 'desc',
                 'post_type'     => 'post',
                 'post_status'   => 'publish',
-                'posts_per_page' => 2,
+                'posts_per_page' => $max,
             )
         );
 
@@ -214,10 +222,27 @@ $tag_id = $current_page->term_id;
 		// pagination( $paged, $query->max_num_pages);
 		// echo '</div>';
 
-		echo '<div class="col-md-12 mt-3 pb-3" style="text-align: center;">';
-			wpbeginner_numeric_posts_nav();
-		echo '</div>';
-		
+		// pagination
+		if( is_super_admin() ) : 
+				echo '<div class="col-md-12 mt-3 pb-3" style="text-align: center;">';
+					wpbeginner_numeric_posts_nav();
+				echo '</div>';
+		endif;
+		if ($user) :
+			if($subs == 'paid') :
+				echo '<div class="col-md-12 mt-3 pb-3" style="text-align: center;">';
+					wpbeginner_numeric_posts_nav();
+				echo '</div>';
+			elseif($subs == 'trial') :
+				// nothing
+			else:
+				// nothing
+			endif;
+				
+		else:
+			// nothing
+		endif;
+				
 		?>
 		
 		<!-- Alternative Method -->
