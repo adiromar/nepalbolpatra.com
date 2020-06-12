@@ -1,6 +1,12 @@
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
 
+<!-- newly added for respnsive part -->
+<!-- <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap.min.css"> -->
+
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.4/css/responsive.bootstrap.min.css"> -->
 <style type="text/css">
 	.list_view_tr th{
 		font-size: 14px;
@@ -12,10 +18,11 @@
 	}
 </style>
 
-<table class="table table-bordered table-striped table-hover" id="list_view_tbl">
+<div class="table-responsive" style="overflow-x: inherit;">
+<table class="table table-bordered table-striped table-hover display responsive nowrap" id="list_view_tbl" width="100%">
 	<thead>
 		<tr class="list_view_tr">
-			<th>#</th>
+			<th># ss</th>
 			<th>Notice Publisher</th>
 			<th>Description</th>
 			<th>Published Date</th>
@@ -28,13 +35,23 @@
 			<th>Image</th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody class="resp">
 		<?php
+		$date = date("Y-m-d");
+		
 		$args = array (
-		    'cat' => array(),
-		    'orderby' => 'date',
-		    'posts_per_page' => 6					    		
-	 	);
+		    'orderby' => 'meta_value_num',
+			'order' => 'ASC',
+		    'posts_per_page' => 12,
+		    'meta_query' => array(
+		        array(
+		            'key' => 'submission_date_eng',
+		            'value' => $date,
+		            'type' => 'DATE',
+					'compare' => '<=',
+		        	)		    		
+	 			)
+	 		);
 		$cat_posts= new WP_query($args);
 
 		// echo '<pre>';
@@ -127,14 +144,15 @@
 			<td>
 				<?php
 				if ( has_post_thumbnail() ) { ?>
-				    <figure> <a href="" data-toggle="modal" data-target="#image_modal<?= $im;?>"><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a> </figure>
+				    <!-- <figure> <a href="" data-toggle="modal" data-target="#image_modal<?= $im;?>"><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a> </figure> -->
+				    <figure><a class="btn_clk" data-img="<?= $cat_id; ?>" ><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a></figure>
 				<?php }
 				?>
 			</td>
 		</tr>
 	
 <!-- Image Modal -->
-<div class="modal fade" id="image_modal<?= $im;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="image_modal<?= $im;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -156,19 +174,72 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 		<?php $im++; endwhile;endif; ?>
 	</tbody>
 </table>
-
+</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
 
+<!--  newly added -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap.min.js"></script> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.7/js/dataTables.fixedHeader.min.js"></script> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js"></script> -->
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.4/js/responsive.bootstrap.min.js"></script> -->
+
+
 <script type="text/javascript">
 	$(document).ready(function() {
-    $('#list_view_tbl').DataTable();
+    // $('#list_view_tbl').DataTable({
+    // 	"paging":   true,
+    //     "ordering": true,
+    //     "info":     true
+    // });
+	var table = $('#list_view_tbl').DataTable( {
+		paging: true,
+		ordering: true,
+		info: true,
+        responsive: true,
+      //       responsive: {
+		    //     breakpoints: [
+		    //         { name: 'desktop', width: Infinity },
+		    //         { name: 'tablet',  width: 1024 },
+		    //         { name: 'fablet',  width: 768 },
+		    //         { name: 'phone',   width: 480 }
+		    //     ]
+		    // }
+    } );
+ 
+    // new $.fn.dataTable.FixedHeader( table );
+
+    $(".btn_clk").click( function(){
+    	val = $(this).data("img");
+    	// alert(val);
+    	var values = {
+            'post_id' : val
+        };
+
+        $('#img_modal').modal('show');
+      	// console.log(values);
+        $.ajax({
+          type: "POST",
+          url: "<?= bloginfo('template_url') ?>/parts/fetch_info_by_id.php",
+          // dataType: 'JSON',
+          data: values,
+          success: function(resp){
+          
+        // $('.mdl-response').show();
+        $(".response").html(resp);
+           },
+           error: function (xhr, ajaxOptions, thrownError) {
+                    var errorMsg = 'Image Request Failed: ' + xhr.responseText;
+                    $('.response').html(errorMsg);
+			}
+         });
+   	});
 } );
 </script>
 

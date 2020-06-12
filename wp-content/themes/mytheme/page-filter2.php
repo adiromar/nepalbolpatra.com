@@ -1,15 +1,10 @@
 <?php get_header(); 
 
-if(isset($_GET['category']) || isset($_GET['industry'])){
-	echo '<pre>';
-	print_r($_GET);
-	echo '</pre>';
-}
-
 $user_id = get_current_user_id();
 $user = get_userdata( $user_id );
 
 $t = get_user_meta($user_id);
+
 
 $subs = $t['user_type'][0];
 if($user){
@@ -34,22 +29,29 @@ $args = array(
 );
 
 $the_query = new WP_Query( $args ); 
-$inds = array();
- if(isset($_GET['category'])){
-	$filter_string .= $_GET['category'];
-}elseif(isset($_GET['industry'])){
-	$inds[] = $_GET['industry'];
-	$filter_string .= $_GET['industry'];
-}else{
+
+ if(isset($_GET['cat'])){
+$filter_string = $_GET['cat'];
+}
+else{
     $filter_string='';
 }
-	$filter_array = explode( ",    ", $filter_string );
-	$filter_arg = '\'' . implode( $filter_array, '\' , \'' ) . '\'';
-	$grp = explode(',', $filter_string);
+$filter_array = explode( ",", $filter_string );
+$filter_arg = '\'' . implode( $filter_array, '\' , \'' ) . '\'';
+$grp = explode(',', $filter_string);
 
-print_r($_GET['industry']);
-if( $_GET['category'] )
-{  
+if(isset($_GET['ind'])){
+$ind_string = $_GET['ind'];
+}
+else{
+    $ind_string='';
+}
+$filter_array1 = explode( ",", $ind_string );
+$filter_arg1 = '\'' . implode( $filter_array1, '\' , \'' ) . '\'';
+$grp1 = explode(',', $ind_string);
+
+if( $filter_string )
+{
   $args = array(
 'post_type'=> 'post',
 'posts_per_page' => $max,
@@ -65,23 +67,25 @@ if( $_GET['category'] )
  
  $max = 1;
 $the_query = new WP_Query( $args );
-} elseif($_GET['industry']){
-	echo "ind";
-	 $args = array(
-		'post_type'=> 'post',
-		'posts_per_page' => $max,
-  		'tax_query' => array(
-	    array(
-	      'taxonomy' => 'industries',
-	      'field' => 'slug',
-	      'terms' => $grp, 
-	      'include_children' => true
-	    )
-  	)
-	);
-	 $the_query = new WP_Query( $args );
+}elseif( $ind_string ){
 
-}else { // if  no category checked or at page start
+$args = array(
+'post_type'=> 'post',
+'posts_per_page' => $max,
+  'tax_query' => array(
+    array(
+      'taxonomy' => 'industries',
+      'field' => 'slug',
+      'terms' => $grp1, 
+      'include_children' => true
+    )
+  )
+);
+ 
+ $max = 1;
+$the_query = new WP_Query( $args );
+
+} else { // if  no category checked or at page start
   $paged = get_query_var('paged');
   $args = array(
 'post_type'=> 'post',
@@ -111,68 +115,154 @@ $the_query = new WP_Query( $args );
 	<div class="row">
 		<div class="col-md-3 col-sm-12 col-xs-12 pl-4">
 			<div class="card p-3">
-				<form action="" method="post" id="myform">
 				<span><i class="fa fa-search"></i> Filter By:</span>
-				
-
-
 				<hr>
-				<label><b>Newspapers</b></label>
 
-				<?php
-				$terms = get_terms(
-					array(
-						'taxonomy' => 'newspapers',
-						'hide_empty' => false,
-					)
-				);
+				<p>
+  				<button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#collapse_news" aria-expanded="false" aria-controls="collapseExample">
+    Newspapers</button>
+				</p>
 
-				foreach ($terms as $data) {
-				?>
+				<div class="collapse mb-4" id="collapse_news">
+				  <div class="card card-body">
+				    <?php
+					$terms = get_terms(
+						array(
+							'taxonomy' => 'newspapers',
+							'hide_empty' => false,
+						)
+					);
+
+					foreach ($terms as $data) {
+					?>
+					<label class="form-check-label">
+      				<input type="checkbox" name="category" value="<?php echo $data->slug;?>" <?php  if( in_array( $data->slug, $filter_array ) ) { echo "checked"; } ?>>
+      				&nbsp;<?php echo $data->name;?>&nbsp;
+    				</label>
+			      <?php
+			      }
+			      ?>
+				  </div>
+				</div>
+			
+
+				<p>
+  				<button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#collapse_ind" aria-expanded="false" aria-controls="collapseExample">
+    Industries</button>
+				</p>
+
+				<div class="collapse mb-4" id="collapse_ind">
+				  <div class="card card-body">
+				    <?php
+					$indust = get_terms(
+						array(
+							'taxonomy' => 'industries',
+							'hide_empty' => false,
+						)
+					);
+
+					foreach ($indust as $ind) {
+					?>
 				<label class="form-check-label">
-      <input type="checkbox" name="category[]" id="newspapers" class="br" value="<?php echo $data->slug;?>" <?php  if( in_array( $data->slug, $filter_array ) ) { echo "checked"; } ?>>
-      &nbsp;<?php echo $data->name;?>&nbsp;
-    </label>
-      <?php
-      }
-      ?>
-		
-	  <hr>
-      <label><b>Industry</b></label>
-
-				<?php
-				$indust = get_terms(
-					array(
-						'taxonomy' => 'industries',
-						'hide_empty' => false,
-					)
-				);
-
-				foreach ($indust as $ind) {
-				?>
-				<label class="form-check-label">
-      <input type="checkbox" name="industry[]" id="industries" class="br"  value="<?php echo $ind->slug;?>" <?php  if( in_array( $ind->slug, $inds ) ) { echo "checked"; } ?>>
-      &nbsp;<?php echo $ind->name;?>&nbsp;
-    </label>
-      <?php
-      }
-      ?>
-
+			      <input type="checkbox" name="industry" value="<?php echo $ind->slug;?>" <?php  if( in_array( $ind->slug, $filter_array1 ) ) { echo "checked"; } ?>>
+			      &nbsp;<?php echo $ind->name;?>&nbsp;
+			    </label>
+			      <?php
+			      }
+			      ?>
+				  </div>
+				</div>
+				
 <!-- filter data -->
 <div class="mt-3">
 <a id="filter" href="#">
-  <button class="btn btn-outline-primary btn-sm" style="">Filter Result</button></a>
-  <input type="submit" name="btnsubmit" value="Filter" id="btnsub" class="btn btn-outline-primary btn-sm">
+  <button class="btn btn-info btn-sm" style="">Filter Result</button></a>
 </div>
-
-</form>
 			</div>
 		</div>
 
-		<div class="col-md-6 col-xs-12 col-sm-12">
+
+
+
+		<div class="col-md-9 col-xs-12 col-sm-12">
+			
 			<div class="card p-3">
-				<medium class="" style="color: black;">Filter Details</medium><hr>
+				<div class="row">
+					<div class="col-md col-sm">
+						<medium class="" style="color: black;">Filter Details</medium>
+					</div>
+					<div class="col-md-2 col-sm-2">
+						<ul class="nav nav-tabs" id="myTab" role="tablist">
+						  <li class="nav-item">
+						    <a class="nav-link active" id="home-tab1" data-toggle="tab" href="#home1" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-list"></i> </a>
+						  </li>
+						  <li class="nav-item">
+						    <a class="nav-link" id="home-tab2" data-toggle="tab" href="#home2" role="tab" aria-controls="home" aria-selected="false"><i class="fa fa-th-large"></i> </a>
+						  </li>
+						</ul>
+
+					</div>
+				</div>
+				<hr>
+
+
 				<?php
+
+				/*if ( have_posts() ) : while ( $the_query->have_posts() ) : $the_query->the_post();
+				$cat_id = get_the_ID();
+				$category = wp_get_post_terms( $cat_id, 'category');
+				$cc = count($category);
+				$cnames = array();
+				for ($i=0; $i < $cc; $i++) { 
+					$cname = $category[$i]->name;
+					$cnames[] = $cname;
+				}
+				$cat_names = implode(', ', $cnames);
+
+				$prod = wp_get_post_terms( $cat_id, 'products');
+				$pc = count($prod);
+				$pnames = array();
+				for ($i=0; $i < $pc; $i++) { 
+					$pname = $prod[$i]->name;
+					$pnames[] = $pname;
+				}
+				$pro_names = implode(', ', $pnames);
+
+				$ind = wp_get_post_terms( $cat_id, 'industries'); 
+				$ic = count($ind);
+				$inames = array();
+				for ($i=0; $i < $ic; $i++) { 
+					$iname = $ind[$i]->name;
+					$inames[] = $iname;
+				}
+				$ind_names = implode(', ', $inames);
+
+				$papers = wp_get_post_terms( $cat_id, 'newspapers'); 
+				$papc = count($papers);
+				$ppnames = array();
+				for ($i=0; $i < $papc; $i++) { 
+					$papname = $papers[$i]->name;
+					$ppnames[] = $papname;
+				}
+				$paper_names = implode(', ', $ppnames);
+
+				$publisher = get_post_meta( $cat_id, 'publisher' , true );
+				$published_date = get_post_meta( $cat_id, 'published_date' , true );
+				$p_date = get_post_meta( $cat_id, 'submission_date_eng' , true );
+				$expiry = get_post_meta( $cat_id, 'expiry_date' , true );
+
+				$today = new DateTime(date("Y-m-j"));
+
+				if($p_date){
+					$sd = DateTime::createFromFormat( "Y-m-d", $p_date )->settime(0,0);
+					$diff = $today->diff($sd)->format("%R%a");
+				}*/
+				?>
+				<div class="tab-content" id="myTabContent">
+
+			    <div class="tab-pane fade show active" id="home1" role="tabpanel" aria-labelledby="home-tab1">
+			      <div class="col-md-12 card pull-left pt-2 mt-4 pb-4">
+			           <?php
 
 				if ( have_posts() ) : while ( $the_query->have_posts() ) : $the_query->the_post();
 				$cat_id = get_the_ID();
@@ -224,6 +314,7 @@ $the_query = new WP_Query( $args );
 					$diff = $today->diff($sd)->format("%R%a");
 				}
 				?>
+
 				<div class="row">
 				<div class="col-md-3 col-sm-12 col-xs-12 mb-4">
 					<?php if (has_post_thumbnail()) : ?>
@@ -270,7 +361,6 @@ $the_query = new WP_Query( $args );
 								switch ( substr( $diff, 1 ) ) {
 									case 0:
 										echo 'Ending Today';
-										$ccat_id[] = get_the_ID();
 										break;
 
 									case 1:
@@ -282,7 +372,6 @@ $the_query = new WP_Query( $args );
 										break;
 									}
 							} else {
-								$ccat_id[] = get_the_ID();
 								echo "<data style='color:red'>Expired</data>";
 							} 
 							 ?></span></span>	
@@ -295,8 +384,137 @@ $the_query = new WP_Query( $args );
 				<hr>
 				<?php endwhile; else:
 				echo '<h4>No Posts Found for this category.</h4>';
-			endif;
+			endif; ?>
+			            
+			        </div>
+			  	</div>
 
+			  	<div class="tab-pane fade" id="home2" role="tabpanel" aria-labelledby="home-tab1">
+			      <div class="col-md-12 card pull-left pt-2 mt-4 pb-4">
+			           
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>S.N.</th>
+								<th>Title</th>
+								<th>Notice Publishe</th>
+								<th>Published Date</th>
+								<th>Last Submission Date</th>
+								<!-- <th>Notice Category</th> -->
+								<th>Newspaper</th>
+								<!-- <th>Industry</th> -->
+								<!-- <th>Product</th> -->
+								<th>Days Left</th>
+								<th></th>
+							</tr>
+						</thead>
+					<tbody>
+			             <?php
+			             $t=1;
+				if ( have_posts() ) : while ( $the_query->have_posts() ) : $the_query->the_post();
+				$cat_id = get_the_ID();
+				$category = wp_get_post_terms( $cat_id, 'category');
+				$cc = count($category);
+				$cnames = array();
+				for ($i=0; $i < $cc; $i++) { 
+					$cname = $category[$i]->name;
+					$cnames[] = $cname;
+				}
+				$cat_names = implode(', ', $cnames);
+
+				$prod = wp_get_post_terms( $cat_id, 'products');
+				$pc = count($prod);
+				$pnames = array();
+				for ($i=0; $i < $pc; $i++) { 
+					$pname = $prod[$i]->name;
+					$pnames[] = $pname;
+				}
+				$pro_names = implode(', ', $pnames);
+
+				$ind = wp_get_post_terms( $cat_id, 'industries'); 
+				$ic = count($ind);
+				$inames = array();
+				for ($i=0; $i < $ic; $i++) { 
+					$iname = $ind[$i]->name;
+					$inames[] = $iname;
+				}
+				$ind_names = implode(', ', $inames);
+
+				$papers = wp_get_post_terms( $cat_id, 'newspapers'); 
+				$papc = count($papers);
+				$ppnames = array();
+				for ($i=0; $i < $papc; $i++) { 
+					$papname = $papers[$i]->name;
+					$ppnames[] = $papname;
+				}
+				$paper_names = implode(', ', $ppnames);
+
+				$publisher = get_post_meta( $cat_id, 'publisher' , true );
+				$published_date = get_post_meta( $cat_id, 'published_date' , true );
+				$p_date = get_post_meta( $cat_id, 'submission_date_eng' , true );
+				$expiry = get_post_meta( $cat_id, 'expiry_date' , true );
+
+				$today = new DateTime(date("Y-m-j"));
+
+				if($p_date){
+					$sd = DateTime::createFromFormat( "Y-m-d", $p_date )->settime(0,0);
+					$diff = $today->diff($sd)->format("%R%a");
+				}
+				?>
+				<tr>
+					<td><?= $t; ?></td>
+					<td><a href="<?= the_permalink(); ?>"><?= the_title(); ?></a></td>
+					<td><?= $publisher; ?></td>
+					<td><?= $published_date; ?></td>
+					<td><?= $expiry; ?></td>
+					<!-- <td><?= $cat_names; ?></td> -->
+					<td><?= $paper_names; ?></td>
+					<td>
+					<?php
+		              if( $diff >= 0){
+		              switch ( substr( $diff, 1 ) ) {
+		                case 0:
+		                  echo 'Ending Today';
+		                  break;
+
+		                case 1:
+		                  echo substr( $diff, 1 ) . ' day';
+		                  break;
+
+		                default:
+		                  echo substr( $diff, 1 ) . ' days';
+		                  break;
+		                }
+		            } else {
+		              echo "<span style='color:red'>Expired</span>";
+		            } ?>
+            		</td>
+					
+					<td>
+					<?php if (has_post_thumbnail()) : ?>
+		              <figure> <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( array( 70, 70 ) , array('class' => 'post-thumbnail-mains')); ?></a> </figure>
+		              <?php else: ?>
+		            <figure> <a href="#" data-toggle="modal" data-target="#login_Modal"><?php the_post_thumbnail('thumbnail', array('class' => 'post-thumbnail-main')); ?></a> </figure>
+            		<?php endif; ?>
+        			</td>
+				</tr>
+
+
+
+			<?php $t++; endwhile; else:
+				echo '<h4>No Posts Found for this category.</h4>';
+			endif; ?>
+				</tbody>
+			</table>
+
+
+			        </div>
+			  	</div>
+
+				</div>
+
+
+				<?php
 
 			// subscription
 			if($user){
@@ -320,10 +538,10 @@ $the_query = new WP_Query( $args );
 			</div>
 		</div>
 
-		<div class="col-md-3">
+		<!-- <div class="col-md-3">
 			<div class="card p-3">
 				<div class="row">
-								<div class="col-md-12 col-sm-12 mt-3">
+			<div class="col-md-12 col-sm-12 mt-3">
 				<h6>Category</h6>
 				<?php
 				$category = get_categories();
@@ -397,96 +615,72 @@ $the_query = new WP_Query( $args );
 				echo '</ul>';
 				?>
 			</div>
-
-				</div>
-			</div>
-		</div>
 	</div>
-	</div>
-
-
-	<div class="container">
-		<div class="card">
-			<div class="row">
-				<div class="response">
-					<p>Result</p>
-				</div>
-			</div>
-		</div>
-	</div>
+	</div> -->
 </section>
+
+
 <script src="<?php bloginfo('template_url') ?>/js/jquery-3.2.1.min.js"></script>
-
-
-
 <script>
 $( document ).ready(function() {
-	// $("input[type=checkbox][name=category]").on("change", function() {
-	// 	console.log('checkbox clicked');
- //    var arr = [];
-
-  //   if("input[type=checkbox][name=category]"){
-		// $(":checkbox").each(function() {
-		//       if ($(this).is(":checked")) {
-		//         arr.push($(this).val());
-		//       }
-		//     });
-		//     var vals = arr.join(",");
-		//     var str = "<?php echo site_url(); ?>/filter2/?cat=" + vals;
-  //   }else{
-  //   	$(":checkbox").each(function() {
-  //     	if ($(this).is(":checked")) {
-  //       arr.push($(this).val());
-  //     }
-  //   });
-  //   var vals = arr.join(",");
-  //   var str = "<?php echo site_url(); ?>/filter2/?cat=" + vals;
-  //   }
-    // $(":checkbox").each(function() {
-    //   if ($(this).is(":checked")) {
-    //     arr.push($(this).val());
-    //   }
-    // });
-    // var vals = arr.join(",");
-    // var str = "<?php echo site_url(); ?>/filter2/?cat=" + vals;
-    // // console.log(str);
-
-    // if (vals.length > 0) {
-    //   $("#filter").attr("href", str);
-    // } else {
-    //   $("#filter").attr("href", "<?php echo site_url(); ?>/filter2");
-    // }
-  // });
-
-$("#myforms").on('submit', function(){
-// $("#btnsub").click(function(){
-	alert('click worked');
-        // e.preventDefault();
-	  // var news = $("#newspapers").val(); 
-	  // var ind = $("#industries").val();
-	  // var dataString = 'newspapers='+news+'&industries='+ind;
-	  var form = $(this);
-
-      // console.log(dataString);
-        $.ajax({
-          type: "POST",
-          // url: "get_template_part('template-parts/content', 'filter')",
-          url: "template-parts/content-filter",
-          // dataType: 'JSON',
-          // data: dataString,
-          data: form.serialize(),
-          success: function(resp){
-            // $('.click_it').click();
-        $('.response').show();
-        $(".response").html(resp);
-           },
-         });
+	$("input[type=checkbox][name=category]").on("change", function() {
+		// console.log('checkbox clicked');
+    var arr = [];
+    $(":checkbox").each(function() {
+      if ($(this).is(":checked")) {
+        arr.push($(this).val());
+      }
     });
+    var vals = arr.join(",");
+    var str = "<?php echo site_url(); ?>/filter/?cat=" + vals;
+    // console.log(str);
 
-	
+    if (vals.length > 0) {
+      $("#filter").attr("href", str);
+    } else {
+      $("#filter").attr("href", "<?php echo site_url(); ?>/filter");
+    }
+  });
+
+	$("input[type=checkbox][name=industry]").on("change", function() {
+		// console.log('checkbox clicked');
+    var arr = [];
+    $(":checkbox").each(function() {
+      if ($(this).is(":checked")) {
+        arr.push($(this).val());
+      }
+    });
+    var vals = arr.join(",");
+    var str = "<?php echo site_url(); ?>/filter/?ind=" + vals;
+    // console.log(str);
+
+    if (vals.length > 0) {
+      $("#filter").attr("href", str);
+    } else {
+      $("#filter").attr("href", "<?php echo site_url(); ?>/filter");
+    }
+  });
+
+	// $("input[type=checkbox][name=industry]").on("change", function() {
+ //    console.log('industry checkbox clicked');
+ //    var arr1 = [];
+ //    $(":checkbox").each(function() {
+ //      if ($(this).is(":checked")) {
+ //        arr1.push($(this).val());
+ //      }
+ //    });
+ //    var vals1 = arr1.join(",");
+ //    var str1 = "<?php echo site_url(); ?>/filter/?ind=" + vals1 + "?cat=";
+ //    console.log(str1);
+
+ //    if (vals1.length > 0) {
+ //      $("#filter").attr("href", str1);
+ //    } else {
+ //      $("#filter").attr("href", "<?php echo site_url(); ?>/filter");
+ //    }
+ //  });
+
 });
-
-
 
 </script>
 <?php get_footer(); ?>

@@ -22,9 +22,10 @@ $terms = get_terms(
 // Check if any term exists
 if ( ! empty( $terms ) && is_array( $terms ) ) {
     // Run a loop and print them all
+    $n = 1;
     foreach ( $terms as $parent ) { 
     	// $cat_image = get_field('category_image', $term); ?>
-<div class="col-md-12 mb-4">
+<div class="col-md-12 mb-4" id="paper_<?= $n;?>">
 	<h5><?= $parent->name; ?></h5>
 </div>
 
@@ -36,10 +37,11 @@ array(
 
 )
 );
+	
     foreach ( $terms1 as $term ) { 
     	// $cat_image = get_field('category_image', $term);
 ?>
-				<div class="col-md-2 col-sm-12 col-xs-12">
+				<div class="col-md-2 col-sm-12 col-xs-12" id="">
 					<div class="icon-box-item">
 						<div class="row">
 						<div class="ib-icon">
@@ -60,7 +62,7 @@ array(
 				</div>
 
 <?php 		}
- 		}
+ 		$n++;  }
 	}
 ?>
 
@@ -69,4 +71,4 @@ array(
 </section>
 
 
-<?php get_footer(); ?>
+<?php get_footer('other'); ?>

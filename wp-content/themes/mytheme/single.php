@@ -3,8 +3,80 @@
 
 $post_id = get_the_ID();
 $cat = get_the_category();
- ?>
+ 
+global $wpdb;
+if(isset($_POST['proposal_submit']))
+{
+// echo '<pre>';
+// print_r($_POST);die;
 
+  $company_name = $_POST['company_name'];
+  $contact_name = $_POST['contact_name'];
+  $email = $_POST['email'];
+  $phone_no = $_POST['contact_number'];
+  // $tender_name = $_POST['tender_name'];
+  $proposal_link = $_POST['proposal_link'];
+  $baseline = $_POST['baseline'];
+  $budget_volume = $_POST['budget_volume'];
+  $pages_number = $_POST['pages_number'];
+
+   $table = "wp_proposal_writing_support";
+  $insert = $wpdb->insert('wp_proposal_writing_support',array(
+  	'company_name' => $company_name,
+  	'contact_name' => $contact_name,
+  	'email' => $email,
+  	'contact_number' => $phone_no,
+  	'baseline' => $baseline,
+  	'proposal_link' => $proposal_link,
+  	'budget_volume' => $budget_volume,
+  	'pages_number' => $pages_number,
+  ),array(
+  	'%s',
+  	'%s',
+  	'%s',
+  	'%s',
+  	'%s',
+  	'%s',
+  	'%s',
+  	'%s',
+  ));
+
+  // print_r($insert);die;
+  // echo '<div class="alert alert-success"><h4>New Industry added successfully.</h4></div>';
+
+  if($insert){ ?>
+
+  	<script>
+var snackbar = function() {
+  $("#message").click();
+}
+setTimeout(snackbar, 1500); 
+
+// load message
+function myFunction() {
+  var x = document.getElementById("snackbar");
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3500);
+}
+</script>
+
+<?php  }else{ ?>
+	<script>
+  	var snackbar = function() {
+  $("#message2").click();
+}
+setTimeout(snackbar, 1500); 
+
+// load message
+function myFunction() {
+  var x = document.getElementById("snackbar11");
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3500);
+}
+</script>
+  <?php }
+}
+?>
 <style type="text/css">
 	th{
 		font-weight: 600;
@@ -13,7 +85,30 @@ $cat = get_the_category();
 		font-size: 14px;
 		color: var(--blue);
 	}
+	.quote-btn-supprt{
+		background: #223645;
+	    color: #fff;
+	    padding: 12px 34px;
+	    border-radius: 5px;
+	}
+	.quote-btn-supprt:hover{
+		background-color: darkorange !important;
+		color: #ddd;
+	}
 </style>
+
+		<!-- toast -->
+		<button id="message" style="display: none;" onclick="myFunction()">Show Snackbar</button>
+		<button id="message2" style="display: none;" onclick="myFunction2()">Show Snackbar</button>
+		<div id="snackbar">
+			<div class="alert alert-success"><strong>Details Submitted </strong> to Admin.
+			</div>
+		</div>
+		<div id="snackbar11" style="display: none;">
+			<div class="alert alert-danger"><strong>Submit Error</strong> Please Try Again.
+			</div>
+		</div>
+
 <section class="hero-section-1 main-pg-section">
 
 	<div class="containersss">
@@ -28,6 +123,10 @@ $cat = get_the_category();
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); 
 	$cat_id = get_the_ID();
+	$meta = get_post_meta($cat_id);
+	// echo '<pre>';
+	// print_r($meta);
+
 
 	$category = wp_get_post_terms( $cat_id, 'category');
 	$cc = count($category);
@@ -157,9 +256,21 @@ if($p_date){
 						?></td>
 					</tr>
 				</table>
+
+				
 			</div>
 
-			<div class="col-md-12 col-sm-12" style="text-align: center;">
+<div class="col-md-12 col-sm-12 pt-4 pb-2">
+	<div class="row">
+		<div class="col-md-6">
+			<a href="#" data-toggle="modal" data-target="#support_modal" class="quote-btn-supprt">Need Support on Proposal Writing?</a>
+		</div>
+		<div class="col-md-6 pull-right" style="text-align: right;">
+			<a href="" class="quote-btn-supprt">Request Quotation</a>
+		</div>
+	</div>
+</div><hr>
+			<div class="col-md-12 col-sm-12 pt-3" style="text-align: center;">
 			<?php
 				if ( has_post_thumbnail() ) {
 				    the_post_thumbnail( 'medium_large');
@@ -236,4 +347,69 @@ else :
     endif; ?>
 
 </section>
-<?php get_footer(); ?>
+
+<div class="modal fade" id="support_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content mdl-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Need Support On Proposal Writing ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="" method="post" id="form_proposal">
+      <div class="modal-body">
+        <div class="row">
+        	<div class="col-md-12 col-sm-12">
+        		<label>Company Name: </label>
+        		<input type="text" name="company_name" class="form-control" required>
+        	</div>
+
+        	<div class="col-md-6 col-sm-12 mt-3">
+        		<label>Contact Name: </label>
+        		<input type="text" name="contact_name" class="form-control" required>
+        	</div>
+
+        	<div class="col-md-6 col-sm-12 mt-3">
+        		<label>Contact Number: </label>
+        		<input type="text" name="contact_number" class="form-control" required>
+        	</div>
+
+        	<div class="col-md-6 col-sm-12 mt-3">
+        		<label>Email</label>
+        		<input type="email" name="email" class="form-control">
+        	</div>
+
+			<div class="col-md-6 col-sm-12 mt-3">
+        		<label>Proposal Link</label>
+        		<input type="text" name="proposal_link" class="form-control">
+        	</div>
+
+        	<div class="col-md-12 col-sm-12 mt-3">
+        		<label>Do You Have Baseline Data: </label>
+        		<label class="ml-4"><input type="radio" value="Yes" name="baseline" class="" required>Yes</label>
+        		<label class="ml-4"><input type="radio" value="No" name="baseline" class="" required>No</label>
+        	</div>
+
+        	<div class="col-md-4 col-sm-12 mt-3">
+        		<label>Volume Of Budget: </label>
+        		<input type="number" min="0" name="budget_volume" class="form-control">
+        	</div>
+
+        	<div class="col-md-4 col-sm-12 mt-3">
+        		<label>Number Of Pages: </label>
+        		<input type="number" min="0" name="pages_number" class="form-control">
+        	</div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+		<input type="submit" name="proposal_submit" class="btn btn-primary" value="Send">
+        <!-- <button type="button" class="btn btn-primary">Send </button> -->
+      </div>
+  </form>
+    </div>
+  </div>
+</div>
+
+<?php get_footer('other'); ?>

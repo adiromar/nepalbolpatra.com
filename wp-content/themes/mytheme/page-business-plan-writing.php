@@ -675,4 +675,4 @@ function animateValue(id, start, end, duration) {
 animateValue("plans", 0, 1500, 5000);
 animateValue("s_rate", 0, 90, 5000);
 </script>
-<?php get_footer(); ?>
+<?php get_footer('other'); ?>

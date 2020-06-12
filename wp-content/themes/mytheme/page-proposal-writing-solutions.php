@@ -151,9 +151,19 @@ if(isset($_POST['btn_submit']))
     padding: 12px 34px;
     border-radius: 5px;
 }
+.quote-btn-supprt{
+	background: #223645;
+    color: #fff;
+    padding: 12px 34px;
+    border-radius: 5px;
+}
 .quote-btn:hover{
 	background-color: #fff !important;
 	color: #223645;
+}
+.quote-btn-supprt:hover{
+	background-color: darkorange !important;
+	color: #ddd;
 }
 .contact-btn{
 	background: #36ab9c;
@@ -215,6 +225,10 @@ if(isset($_POST['btn_submit']))
 					<p>Tenders A to Z allows you to maximise your chances of winning your bid, while outsourcing 99% of the work involved.</p>
 
 					<p>Our qualified and experienced tender writers provide confidential bid support tailored to your exact needs, by following this process:</p>
+				</div>
+
+				<div class="cust-cont pt-4">
+					<a href="#" data-target="" class="quote-btn-supprt">Need Support on Proposal Writing?</a>
 				</div>
 			</div>
 		</div>
@@ -499,4 +513,4 @@ animateValue("exp", 0, 100, 7000);
 
 </script>
 
-<?php get_footer(); ?>
+<?php get_footer('other'); ?>

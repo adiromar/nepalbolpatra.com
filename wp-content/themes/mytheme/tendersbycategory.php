@@ -43,9 +43,9 @@ get_header();
 					echo '<div class="col-md-2 cat-lists">';
 						echo '<div class="row">';
 							echo '<div class="col-md-12">';
-						if ( z_taxonomy_image_url($term->term_id) ){
+						if ( z_taxonomy_image_url($val->term_id) ){
 							?>
-							<a href="<?php echo esc_url( get_term_link( $term ) ) ?>"><img src="<?= z_taxonomy_image_url($term->term_id); ?>" width="180" height="120"></a>
+							<a href="<?php echo esc_url( get_term_link( $val ) ) ?>"><img src="<?= z_taxonomy_image_url($val->term_id); ?>" width="180" height="120"></a>
 							
 							<?php }else{ ?>
 								<a href="<?= get_category_link($val->term_id) ?>"><img src="<?= get_template_directory_uri() ?>/img/unnamed.png" class="post-thumbnail-mains mb-3" width="180" height="120"></a>

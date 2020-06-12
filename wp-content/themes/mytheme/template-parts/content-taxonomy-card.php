@@ -1,4 +1,4 @@
-<div class="row p-3">
+<!-- <div class="row p-3"> -->
 		<?php
 			
 // foreach($custom_terms as $custom_term) {
@@ -82,19 +82,23 @@ $currCat = get_queried_object();
 			$expiry = get_post_meta( $cat_id, 'expiry_date' , true );
 
 			$today = new DateTime(date("Y-m-j"));
+			if($p_date){
+		        $sd = DateTime::createFromFormat( "Y-m-d", $p_date )->settime(0,0);
+		        $diff = $today->diff($sd)->format("%R%a");
+			}
      	?>
 
-		<div class="col-md-6 cards mb-5 p-2" style="border: 1px dashed grey;border-radius: 12px;">
+		<div class="col-md-4 cards mb-5 p-2" style="border-bottom: 1px solid darkgrey;">
 			
 			
 			<div class="row mb-4">
 				<div class="col-md-3">
 					<?php if (has_post_thumbnail()) : ?>
-					<figure> <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'post-thumbnail-main')); ?></a> </figure>
+					<figure> <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(array(80, 80), array('class' => 'post-thumbnail-main')); ?></a> </figure>
 				<?php else:
-					echo '<img src="'.get_template_directory_uri().'/img/unnamed.png" class="post-thumbnail-main" width="200" height="150">';
+					echo '<img src="'.get_template_directory_uri().'/img/unnamed.png" class="post-thumbnail-main" width="80" height="80">';
 				endif; ?>
-				<a href="<?= the_permalink(); ?>" class="btn btn-primary btn-sm"><u>View Notice s</u></a>
+				<!-- <a href="<?= the_permalink(); ?>" class="btn btn-primary btn-sm"><u>View Notice s</u></a> -->
 				</div>
 	
 				<div class="col-md-9">
@@ -102,18 +106,23 @@ $currCat = get_queried_object();
 					<?php //echo mb_strimwidth(get_the_content(), 0, 190, '...'); ?>
 
 					<div class="row">
-						<div class="col-md-6" style="overflow: hidden;">
+						<div class="col-md-12" style="overflow: hidden;">
 							<div class="row">
 
 						<div class="col-md-12">
 						<p class="p_list">
+							<span class="float-left"><i class="fa fa-address-card"></i></span>
+							<span class="ml-4 float-left"><span><?= mb_strimwidth($publisher, 0, 15, '...'); ?></span></span>	
+						</p></div>
+						<div class="col-md-12">
+						<p class="p_list">
 							<span class="float-left"><i class="fa fa-list-ul "></i></span>
-							<span class="ml-4 float-left"><span><?= $cat_names; ?></span></span>	
+							<span class="ml-4 float-left"><span><?= mb_strimwidth($cat_names, 0, 15, '...'); ?></span></span>	
 						</p></div>
 						<div class="col-md-12">
 						<p class="p_list">
 							<span class="float-left"><i class="fa fa-paper-plane"></i></span>
-							<span class="ml-4 float-left"><span><?= $paper_names; ?></span></span>	
+							<span class="ml-4 float-left"><span><?= mb_strimwidth($paper_names, 0, 15, '...'); ?></span></span>	
 						</p></div>
 
 						<!-- <div class="col-md-12">
@@ -153,9 +162,9 @@ $currCat = get_queried_object();
 
 	</div>
 </div>
-<div class="col-md-6" style="border-left: 1px dashed lightgrey;text-align: justify;">
-	<?php echo mb_strimwidth(get_the_content(), 0, 110, '...'); ?>
-</div>
+<!-- <div class="col-md-6" style="border-left: 1px dashed lightgrey;text-align: justify;">
+	<?php// echo mb_strimwidth(get_the_content(), 0, 110, '...'); ?>
+</div> -->
 					</div>
 
 				</div> <!-- col-9 ends  -->
@@ -205,4 +214,4 @@ endif;
 			</div> -->
 		<?php } ?>
 
-		</div>
+		<!-- </div> -->

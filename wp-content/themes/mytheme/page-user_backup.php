@@ -53,166 +53,235 @@ if ( !empty($_POST) && !empty( $_POST['action'] ) && $_POST['action'] == 'update
 }
 }
 $user_info = get_user_meta($current_user->ID);
+
+// echo '<pre>';
+// print_r($user_info);die;
 ?>
 
+<style type="text/css">
+  
+</style>
+
+
 <section class="hero-section-1 main-pg-section">
-
-	<div class="containersss">
-		<div class="card p-4">
-			<div class="row ml-5 brd-crm">
-				<div class="col-md-6 col-sm">
-					<span><a href="">Home</a>/</span>
-					<span>Profile/</span>
-					<span>Update Profile</span>
-				</div>
-				<div class="col-md-6 col-sm">
-					<?php
-					if(isset($msg)){
-						echo $msg;
-					}
-
-					?>
-				</div>
-				
-			</div>
-		</div>
-	</div>
+    <div class="containersss">
+    <div class="card p-3">
+      <div class="row ml-5 brd-crm">
+        <div class="col-md-6 col-sm">
+          <span><a href="">Home</a>/</span>
+          <span>Profile/</span>
+          <span>Update Profile</span>
+        </div>
+        <div class="col-md-6 col-sm">
+          <?php
+          if(isset($msg)){
+            echo $msg;
+          }
+          ?>
+        </div>
+        
+      </div>
+    </div>
+  </div>
 
 
-	<div class="row">
-		<div class="col-md-12">
-
-    <div class="content" style="margin-top: 20px;">
-      
-      <?php if ( !empty($error) ): ?>
-      
-        <?php echo '<div class="alert alert-warning">'.$error.'</div>'; ?>
-     
-<?php endif; ?>
- <?php 
+  <div class="container">  
+    <div class="row">
+      <div class="content card">
+        <?php 
+        if ( !empty($error) ): 
+         echo '<div class="alert alert-warning">'.$error.'</div>'; 
+        endif; 
+ 
       switch ($error) {
         case 'success':
           echo "<div class='alert alert-success' >You have successfully update your profile</div>";
           break;
-        
+
         default:
           echo "";
           break;
       }
-
  ?>
-
-      <?php while ( have_posts() ) : the_post(); ?>
-
-        <div class="container card p-2">
-    <h4 style="margin-top: 40px;text-align: center;">Edit Profile: <?php echo esc_html($current_user->nickname); ?></h4>
-    <hr>
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-1">
-        
       </div>
-      
-      <!-- edit form column -->
-      <div class="col-md-8 personal-info col-md-offset-1">
-      <?php if ( !empty($_GET['success']) ): ?>
 
-        <div class="alert alert-info">
-          
-          <strong>Profile updated successfully!</strong>
-        </div>
-      <?php endif; ?>
-
-        
-          <!--alert box starts here-->
-
-
-<div class="alert" id="mydiv">
-  <br><br>
- <h4 style="color:blue;"><strong>Choose your interest fields to get regular email notifications.</strong> </h4> 
+    </div> <!-- end of row -->
 </div>
-  <!--alert box ends here-->
-      <div class="form-wrapper" style="border:2px solid black; border-radius:8px; padding-top: 30px; background:#e6e6e6; padding-left: 10px; padding-right: 10px;">
-        <form class="form-horizontal" method="post" id="adduser" action="<?php echo site_url();?>/user/" role="form" style="backgroundr:light green; ">
-            <h4 style="padding-left:25%; color:green;">Personal info:</h4>
-        <div class="form-group">
-          <label class="col-md-3 control-label">Username*:</label>
-          <div class="col-md-6">
-            <input class="form-control" type="text" value="<?php echo $current_user->{'user_login'} ?>" readonly>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-md-3 control-label">First Name:</label>
-          <div class="col-md-6">
-            <input class="form-control" name="firstname_new" type="text" placeholder="Firstname" value="<?php echo $user_info['first_name'][0] ?>">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-md-3 control-label">Last name:</label>
-          <div class="col-md-6">
-            <input class="form-control" placeholder="Lastname" name="lastname_new" type="text" value="<?php echo $user_info['last_name'][0] ?>">
-          </div>
-        </div>
-        <h4 style="padding-left:25%; color:green;">Contact Details:</h4>
-        <div class="form-group">
-          <label class="col-md-3 control-label">Email*:</label>
-          <div class="col-md-6">
-            <input class="form-control" name="email_new" type="text" value="<?php echo $current_user->{'user_email'} ?>" required>
-          </div>
-        </div>
-        
-       <!--  <div class="form-group">
-          <label class="col-md-3 control-label">Website:</label>
-          <div class="col-md-6">
-            <input class="form-control" name="website_new" type="email" placeholder="Website" value="<?php echo $current_user->{'user_url'} ?>">
-          </div>
-        </div> -->
-        
-        <h4 style="padding-left:25%; color:green;">About Yourself:</h4>
-        <div class="form-group">
-          <label class="col-md-3 control-label">Description</label>
-          <div class="col-md-6">
-            <textarea class="form-control" name="description_new" rows="4"><?php echo $user_info['description'][0] ?></textarea>
-          </div>
-        </div>
-     
-      <h4 style="color:green; padding-left:25%">Your Interest Fields:</h4>
-       <div class="form-group">
-          <div class="col-md-3"></div>
-          <div class="col-md-6">
-          <?php
-              // action hook for plugin and extra fields
-              do_action('edit_user_profile', $current_user);
 
-            ?>
+
+
+<?php while ( have_posts() ) : the_post(); ?>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 mt-3">
+
+        <div class="col-md-4 col-sm-12 tax-heading">
+          <h4 >Edit Profile: <?php echo esc_html($current_user->nickname); ?></h4>
+        </div>
+
+        <div class="card p-3 mb-4">
+          <div class="col-md-12 col-sm-12">
+        
+          <?php if ( !empty($_GET['success']) ): ?>
+
+            <div class="alert alert-info">
+              <strong>Profile updated successfully!</strong>
             </div>
-          </div>
-       
-        <br><br>
-        <div class="form-group">
-          <label class="col-md-3 control-label"></label>
-          <div class="col-md-6">
-            <input name="updateuser" type="submit" id="updateuser" class="btn btn-primary btn-block" value="Update Profile">
-            <span></span>
-            <input name="action" type="hidden" id="action" value="update-user">
+          <?php endif; ?>
+
+          <div class="alert" id="mydiv">
+            <h4 style="color:#267cb4;"><strong>Choose your interest fields to get regular email notifications.</strong> </h4> 
           </div>
         </div>
-      </form>
-      </div>
+
+        <div class="col-md-12 col-sm-12">
+          <form class="form-horizontal" method="post" id="adduser" action="<?php echo site_url();?>/user/" role="form" style="backgroundr:light green; ">
         
+            <!-- <h4 style="color:green;">Personal info:</h4> -->
+              
+                
+                <fieldset>
+                  <div class="row">
+                    <div class="col-md-6 col-sm-12 profile-hf-left">
+                      <div class="row">
+                        <legend><u>Personal Information</u></legend>
+                <div class="col-md-12 col-sm-12">
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <label><i class="fa fa-user"></i> Username*:</label>
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                      <input class="form-control" type="text" value="<?php echo $current_user->{'user_login'} ?>" readonly>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12 mt-3">
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <label><i class="fa fa-address-card"></i> First Name:</label>
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                      <input class="form-control" name="firstname_new" type="text" placeholder="Firstname" value="<?php echo $user_info['first_name'][0] ?>">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12 mt-3">
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <label><i class="fa fa-address-card"></i> Last Name:</label>
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                      <input class="form-control" placeholder="Lastname" name="lastname_new" type="text" value="<?php echo $user_info['last_name'][0] ?>">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12 mt-3">
+                  <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <label><i class="fa fa-envelope"></i> Email*:</label>
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                      <input class="form-control" name="email_new" type="text" value="<?php echo $current_user->{'user_email'} ?>" required>
+                    </div>
+                  </div>
+                </div>
+
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 col-sm-12 profile-hf-right">
+                      <div class="row pl-2">
+                        <legend><u>About Yourself</u></legend>
+
+                          <div class="col-md-12 col-sm-12 mt-3">
+                            <div class="row">
+                              <div class="col-md-12 col-sm-12">
+                                <label><i class="fa fa-book"></i> Description</label>
+                                <textarea class="form-control" name="description_new" rows="6"><?php echo $user_info['description'][0] ?></textarea>
+                              </div>
+                            </div>
+                          </div>
+
+                      </div>
+                    </div>
+                  </div>
+                  
+              </fieldset>
+
+                <div class="row mt-3">                
+
+                <legend><u>Your Interest Fields:</u></legend>
+                <div class="col-md-12 col-sm-12 mt-3">
+                  <div class="row">
+                    
+                    <div class="col-md-12 col-sm-12">
+                      <?php
+                      // action hook for plugin and extra fields
+
+                      do_action('edit_user_profile', $current_user);
+
+                      ?>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12 mt-3">
+                  <div class="row">
+
+                    <div class="col-md-6 col-sm-12">
+                      <input name="updateuser" type="submit" id="updateuser" class="btn btn-primary btn-block col-md-4 col-sm-12" value="Update Profile">
+                      <input name="action" type="hidden" id="action" value="update-user">
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+          </form>
+        </div>
+
       </div>
-    </div>
+
+      </div>
+
+
+    </div> <!-- end of row -->
+
+
+    
   </div>
 
-<hr>
-      <?php endwhile; ?>        
-      
-    </div>
-  </div>
+<?php endwhile; ?>
 
   </div>
-	</div>
 </section>
+
+
+<?php
+// $post_id = 144;
+
+// $papers = wp_get_post_terms( $post_id, 'newspapers'); 
+//   $papc = count($papers);
+//   $ppnames = array();
+//   for ($i=0; $i < $papc; $i++) { 
+//     $papname = $papers[$i]->slug;
+//     $ppnames[] = $papname;
+//   }
+//   $paper_names = implode(', ', $ppnames);
+
+//   $paper_names = explode(', ', $paper_names);
+
+// foreach ($paper_names as $paper) {
+//   echo $paper;echo $post_id;
+//   add_to_schedule_email( $paper, $post_id );
+// }
+
+?>
+
 
 <script>
    var fade_out = function() {
@@ -222,4 +291,4 @@ $user_info = get_user_meta($current_user->ID);
 setTimeout(fade_out, 5000); 
 </script>
 
-<?php get_footer(); ?>
+<?php get_footer('other'); ?>

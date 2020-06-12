@@ -1,3 +1,5 @@
+
+
 	<!-- Footer Section -->
 	<footer class="footer-section">
 		<div class="container">
@@ -69,15 +71,20 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="<?php bloginfo('template_url') ?>/js/bootstrap.min.js"></script>
 	<script src="<?php bloginfo('template_url') ?>/js/jquery.slicknav.min.js"></script>
 	<script src="<?php bloginfo('template_url') ?>/js/owl.carousel.min.js"></script>
+	
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
 	<script src="<?php bloginfo('template_url') ?>/js/jquery-ui.min.js"></script>
 	<script src="<?php bloginfo('template_url') ?>/js/main.js"></script>
 
 	<!-- <script src="<?php bloginfo('template_url') ?>/assets/js/ajax.js"></script> -->
-
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script> -->
 	<script src="<?php bloginfo('template_url') ?>/js/wow.min.js"></script>
-	
+	<!-- <script src="<?php bloginfo('template_url') ?>/assets/dist/snackbar.min.js"></script> -->
+
 	<script>
   	new WOW().init();
+  	// new Snackbar().init();
 	</script>
 
 
@@ -131,8 +138,116 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
    var fade_out = function() {
   $(".alert-bx").fadeOut().empty();
 }
-
 setTimeout(fade_out, 500000); 
+
+ 
+
+
+$(document).ready(function() {
+	$('.button').click(function() {
+   		Snackbar.show({text: 'Example notification text.'});
+	});
+
+$(".btn_clk").click( function(){
+    	val = $(this).data("img");
+    	// alert(val);
+    	var values = {
+            'post_id' : val
+        };
+
+        $('#img_modal').modal('show');
+      	// console.log(values);
+        $.ajax({
+          type: "POST",
+          url: "<?= bloginfo('template_url') ?>/parts/fetch_info_by_id.php",
+          // dataType: 'JSON',
+          data: values,
+          success: function(resp){
+          
+        // $('.mdl-response').show();
+        $(".response").html(resp);
+           },
+           error: function (xhr, ajaxOptions, thrownError) {
+                    var errorMsg = 'Image Request Failed: ' + xhr.responseText;
+                    $('.response').html(errorMsg);
+			}
+         });
+   	});
+
+
+var ajaxUrl = "<?php echo admin_url('admin-ajax.php')?>";
+    var page = 1; // What page we are on.
+    var ppp = 3; // Post per page
+ $(".more_posts").click( function(){ 
+ 	// $( "#outer" ).mouseover(function() {
+        $(".more_posts").attr("disabled",true); // Disable the button, temp.
+        id = $(this).data("id");
+        // alert(id);
+        // alert(ajaxUrl);
+		// $('html, body').animate({
+	 //        scrollTop: $("#card_view").offset().top -270
+	 //    }, 'slow'); // scroll to div
+
+   		$('.loading_img').show();
+		var data = {
+			'action': 'load_posts_by_ajax',
+			'page': page,
+			// 'security': '<?php echo wp_create_nonce("load_more_posts"); ?>',
+		};
+
+		$.post(ajaxUrl, data, function(response){
+			// $('.my-posts').append(response);
+			$('.resp_card').html(response).hide().fadeIn(1500);
+			$('.loading_img').hide();
+			page++;
+			
+
+		});
+	});
+
+});
+
+// function to callback main url and remove parameters from url after reloads
+var url= document.location.href;
+if (url.indexOf("?s=") > -1) {
+      // alert("your url contains the name franky");
+    }else if(url.indexOf("?") > -1){
+		ff = url.split("?")[1];
+		gg = ff.split("=")[0];
+
+		if(gg == 's'){
+			// do nothing
+		}else{
+			window.history.pushState({}, "", url.split("?")[0]);
+		}
+    }else{
+    	// do nothing
+    }
+
+
+
+// ajax pagination
+var ajaxUrl = "<?php echo admin_url('admin-ajax.php')?>";
+    var page = 1; // What page we are on.
+    jquery(function($){
+    	$(window).scroll(function(){
+    		if($(window).scroll() == $(document).height() - $(document).height()) {
+
+    			alert('scroll');
+    			var data = {
+    				'action': 'load_posts_by_ajax',
+    				'page': page,
+    				// 'security': '<?php echo wp_create_nonce("load_more_posts"); ?>',
+    			};
+
+    			$.post(ajaxUrl, data, function(response){
+    				$('.my-posts').append(response);
+    				page++;
+    			});
+    		}
+    	});
+    });
+
 </script>
 
 	</body>

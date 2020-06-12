@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<!-- Favicon -->
-	<link href="img/favicon.ico" rel="shortcut icon"/>
+	<link href="<?php bloginfo('template_url') ?>/img/apple-icon.png" rel="shortcut icon"/>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap" rel="stylesheet">
@@ -17,6 +17,8 @@
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/font-awesome.min.css"/>
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/owl.carousel.min.css"/>
+  <link rel="stylesheet" href="owlcarousel/owl.theme.default.min.css">
+  
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/flaticon.css"/>
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/slicknav.min.css"/>
 
@@ -26,6 +28,8 @@
 	<link rel="stylesheet" href="<?php bloginfo('template_url') ?>/css/style.css"/>
 
 	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- <link ref="stylesheet" type="text/css" href="<?php bloginfo('template_url') ?>/assets/dist/snackbar.min.css" /> -->
 	<!--[if lt IE 9]>
 		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -34,6 +38,26 @@
 
 </head>
 <body>
+  <style>
+    /*.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) { 
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}*/
+  </style>
 	<!-- Page Preloder -->
 	<div id="preloder">
 		<div class="loader"></div>
@@ -49,19 +73,57 @@
 			<ul class="main-menu">
 				<li><a href="<?= home_url(); ?>" class="">Home</a></li>
         <li><a href="<?= home_url()?>/listall">List all</a></li>
-				<li><a href="<?= home_url()?>/pricing">Pricing</a></li>
+				<?php if( is_user_logged_in() ) : 
+              if( is_super_admin() ) : ?>
+                <li><a href="<?= home_url()?>/tender-by-category">Tender By Category</a></li>
 
-        <li><a href="<?= home_url()?>/proposal-writing-solutions">Proposal Writing Solutions</a></li>
-        <li><a href="<?= home_url()?>/business-plan-writing">Business Plan Writing</a></li>
+                <li><a href="#"><i class="fa fa-chevron-down"></i> Features</a>
+                <ul class="sub-menu">
+                  <li><a href="<?= home_url()?>/listall?adv=search"><i class="fa fa-search"></i> Advance Search</a></li>
+                  <li><a href="<?= home_url()?>/allnewspapers"><i class="fa fa-paper-plane"></i> All Newspapers</a></li>
+                  <li><a href="<?= home_url()?>/tender-by-category">Tender By Category</a></li>
+                  <li><a href="<?= home_url()?>/pricing">Pricing</a></li>
+                </ul></li>
 
-				<li><a href="#"><i class="fa fa-chevron-down"></i> Services</a>
-					<ul class="sub-menu">
-						<li><a href="<?= home_url()?>/addfeatured"><i class="fa fa-pencil"></i> Featured</a></li>
-						<li><a href="<?= home_url()?>/features"><i class="fa fa-user"></i> Tender Services</a></li>
-            <li><a href="<?= home_url()?>/notify"><i class="fa fa-ticket"></i> Vouchers</a></li>
-					</ul>
-				</li>
-				<li><a href="<?= home_url()?>/tender-by-category">Tenders By Category</a></li>
+              <li><a href="#"><i class="fa fa-chevron-down"></i> Services</a>
+              <ul class="sub-menu">
+                <li><a href="<?= home_url()?>/addpricing"><i class="fa fa-ticket"></i> Add Pricing</a></li>
+                <li><a href="<?= home_url()?>/edit-pricing"><i class="fa fa-ticket"></i> Edit Pricing</a></li>
+                <li><a href="<?= home_url()?>/notify"><i class="fa fa-ticket"></i> Vouchers</a></li>
+              </ul></li>
+              <?php else: ?>
+                <li><a href="#"><i class="fa fa-chevron-down"></i> Features</a>
+                <ul class="sub-menu">
+                  <li><a href="<?= home_url()?>/listall?adv=search"><i class="fa fa-search"></i> Advance Search</a></li>
+                  <li><a href="<?= home_url()?>/allnewspapers"><i class="fa fa-paper-plane"></i> All Newspapers</a></li>
+                  <li><a href="<?= home_url()?>/tender-by-category">Tender By Category</a></li>
+                  <li><a href="<?= home_url()?>/pricing">Pricing</a></li>
+                </ul></li>
+
+                <li><a href="<?= home_url()?>/tender-by-category">Tender By Category</a></li>
+
+                <li><a href="#"><i class="fa fa-chevron-down"></i> Solutions</a>
+                <ul class="sub-menu">
+                  <li><a href="<?= home_url()?>/proposal-writing-solutions">Proposal Writing Solutions</a></li>
+                <li><a href="<?= home_url()?>/business-plan-writing">Business Plan Writing</a></li>
+                </ul></li>
+
+                
+                
+                
+              <?php endif; ?>
+              <?php else: ?>
+                <li><a href="#"><i class="fa fa-chevron-down"></i> Features</a>
+              <ul class="sub-menu">
+                <li><a href="<?= home_url()?>/allnewspapers">Newspapers</a></li>
+                <li><a href="<?= home_url()?>/tender-by-category">All Category</a></li>
+                <li><a href="<?= home_url()?>/pricing">Pricing</a></li>
+              </ul></li>
+
+                <li><a href="<?= home_url()?>/proposal-writing-solutions">Proposal Writing Solutions</a></li>
+                <li><a href="<?= home_url()?>/business-plan-writing">Business Plan Writing</a></li>
+            <?php endif; ?>
+        </li>
 
 
         
@@ -143,7 +205,7 @@
         		<div class="col-md-12 mt-2">
         			<input class="loginLoginValue" type="hidden" name="service" value="login" />
 					<!-- <input type="hidden" name="redirect_to" value="<?php echo $_SERVER['REQUEST_URI']; ?>" /> -->
-          <input type="hidden" name="redirect_to" value="<?= home_url(); ?>/listall" />
+          <input type="hidden" name="redirect_to" value="<?= home_url(); ?>/listall?login=true" />
 					<input type="hidden" name="user-cookie" value="1" />
 					<input type="submit" name="user-submit" id="go" class="form-control auth-btn" value="Authorize">
         		</div>
@@ -190,7 +252,7 @@
 
         		<div class="col-md-12 mt-2">
               <?php do_action('register_form'); ?>
-					<input type="hidden" name="redirect_to" value="<?php echo $_SERVER['REQUEST_URI']; ?>?register=true" />
+					<input type="hidden" name="redirect_to" value="<?php echo site_url(); ?>?register=true" />
 					<input type="hidden" name="user-cookie" value="1" />
 					<input type="submit" name="user-submit" id="gos" class="form-control signup-btn" value="Register">
         		</div>
@@ -243,6 +305,46 @@
   </div>
 </div>
 <!-- Forgot Password  Modal ends -->
+<style type="text/css">
+  .modal-backdrop.in{
+    opacity: 0.5;
+    } 
+    .fade.in{
+      opacity: 1;
+    }
+</style>
+<!-- image modal -->
+<div class="modal img_modal" id="img_modal" tabindex="-1" role="dialog" style="">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content response">
+      
+      
+      
+    </div>
+  </div>
+</div>
+<!-- image modal ends -->
+
+<!-- notice category modal -->
+<!-- <div class="modal fade" id="not_cat_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content mdl-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Notice Category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="text" name="testname" value="some value here">
+      </div>
+      
+    </div>
+  </div>
+</div> -->
+<!-- notice category modal ends  -->
+
+
 <?php 
 // if( is_user_logged_in() ) : 
 
@@ -252,9 +354,12 @@
   ?>
 
 <script>
-  // $(document).ready(function(){
-  //   $('#clk_this').click();
-  // });
+  $(document).ready(function(){
+    // $('#clk_this').click();
+    $("#img_modal").click(function(){
+    $("#img_modal").modal({backdrop: true});
+  });
+  });
 </script>
 
   <?php 

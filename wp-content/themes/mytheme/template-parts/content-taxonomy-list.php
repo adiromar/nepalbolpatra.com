@@ -171,14 +171,15 @@ endif;
 			<td>
 				<?php
 				if ( has_post_thumbnail() ) { ?>
-				    <figure> <a href="" data-toggle="modal" data-target="#image_modal_list<?= $im;?>"><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a> </figure>
+				    <!-- <figure> <a href="" data-toggle="modal" data-target="#image_modal_list<?= $im;?>"><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a> </figure> -->
+				    <figure><a class="btn_clk" data-img="<?= $cat_id; ?>" ><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a></figure>
 				<?php }
 				?>
 			</td>
 		</tr>
 	
 <!-- Image Modal -->
-<div class="modal fade" id="image_modal_list<?= $im;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 1000;">
+<!-- <div class="modal fade" id="image_modal_list<?= $im;?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 1000;">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -200,7 +201,7 @@ endif;
       </div>
     </div>
   </div>
-</div>
+</div> -->
 		<?php $im++; endwhile;endif; ?>
 	</tbody>
 </table>
@@ -213,5 +214,33 @@ endif;
 <script type="text/javascript">
 	$(document).ready(function() {
     $('#list_view_tbl').DataTable();
+
+    $(".btn_clk").click( function(){
+    	val = $(this).data("img");
+    	// alert(val);
+    	var values = {
+            'post_id' : val
+        };
+
+        $('#img_modal').modal('show');
+      	// console.log(values);
+        $.ajax({
+          type: "POST",
+          url: "<?= bloginfo('template_url') ?>/parts/fetch_info_by_id.php",
+          // dataType: 'JSON',
+          data: values,
+          beforeSend: function() {
+              // $(".response").hide();
+          },
+          success: function(resp){
+	        // $(".response").show();
+	        $(".response").html(resp);
+           },
+          error: function (xhr, ajaxOptions, thrownError) {
+            var errorMsg = 'Image Request Failed: ' + xhr.responseText;
+            $('.response').html(errorMsg);
+			}
+         });
+   	});
 } );
 </script>

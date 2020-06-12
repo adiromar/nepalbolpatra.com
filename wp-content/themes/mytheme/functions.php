@@ -33,12 +33,14 @@ function custom_meta_box_markup($object)
         <br>
         <div class="col-md-12">
         	<label>Published Date <span style="color: red"><b>*</b>: </label>
-            <input id="datepicker1" name="published_date" type="text" value="<?php echo get_post_meta($object->ID, "published_date", true); ?>" placeholder="PublishedDate" class="form-control nepali-calendar" autocomplete="off" required>
+            <input id="datepicker1" name="published_date" type="text" value="<?php echo get_post_meta($object->ID, "published_date", true); ?>" placeholder="Published Date (B.S)" class="form-control nepali-calendar" autocomplete="off" required>
+
+            <input type="text" name="published_date_eng" id="englishDate_pub" class="form-control" value="<?php echo get_post_meta($object->ID, "published_date_eng", true); ?>" placeholder="" autocomplete="off" readonly>
         </div>
         <br>
         <div class="col-md-12" style="margin-bottom: 155px;">
         	<label>Last Date of Submission <span style="color: red"><b>*</b>:</label>
-            <input id="nepaliDate" name="expiry_date" type="text" value="<?php echo get_post_meta($object->ID, "expiry_date", true); ?>" placeholder="Expiry Date" class="form-control nepali-calendar">
+            <input id="nepaliDate" name="expiry_date" type="text" value="<?php echo get_post_meta($object->ID, "expiry_date", true); ?>" placeholder="Expiry Date" class="form-control nepali-calendar" autocomplete="off">
             <input type="text" name="submission_date_eng" id="englishDate" class="form-control" value="<?php echo get_post_meta($object->ID, "submission_date_eng", true); ?>" placeholder="English Date" autocomplete="off" readonly>
         </div>
 
@@ -58,13 +60,17 @@ $('#datepicker1').nepaliDatePicker({
       npdYear: true,
     });
 
-  $('#nepaliDate').nepaliDatePicker({
+$('#nepaliDate').nepaliDatePicker({
     ndpEnglishInput: 'englishDate'
 });
 
-  $('#englishDate').change(function(){
-      $('#nepaliDate').val(AD2BS($('#englishDate').val()));
-    });
+$('#englishDate').change(function(){
+  $('#nepaliDate').val(AD2BS($('#englishDate').val()));
+});
+
+$('#datepicker1').nepaliDatePicker({
+    ndpEnglishInput: 'englishDate_pub'
+});
 
  });
   </script>
@@ -115,8 +121,13 @@ function save_custom_meta_box($post_id, $post, $update)
     if(isset($_POST["submission_date_eng"]))
     {
         $meta_box_text_value3 = $_POST["submission_date_eng"];
-    }   
-    update_post_meta($post_id, "submission_date_eng", $meta_box_text_value3);
+    } 
+    update_post_meta($post_id, "submission_date_eng", $meta_box_text_value3);  
+    if(isset($_POST["published_date_eng"]))
+    {
+        $meta_box_text_value4 = $_POST["published_date_eng"];
+    }  
+    update_post_meta($post_id, "published_date_eng", $meta_box_text_value4);
 }
 
 add_action("save_post", "save_custom_meta_box", 10, 3);
@@ -280,8 +291,97 @@ function add_datepicker_in_footer(){ ?>
 //add an action to call add_datepicker_in_footer function
 add_action('wp_footer','add_datepicker_in_footer', 10);
 
+/*
+	=====================================
+		Add Custom Interest Field on User Profile 2
+	=====================================
+*/
+add_action('show_user_profile1', 'extra_user_profile_fields1');
+add_action('edit_user_profile1', 'extra_user_profile_fields1');
+//show "INTEREST" extra field for each User on their PROFILE PAGE
+function extra_user_profile_fields1( $user ) { ?>
+	<?php
+	global $wpdb;
+	?>
 
+	<div class="col-md-12 col-sm-12">
+		<button class="btn btn-primary btn-sm  chev" type="button" data-toggle="collapse" data-target="#cat" aria-expanded="false" aria-controls="collapseExample">Category 
+		</button>
+	</div>
+	<div class="collapse mt-2" id="cat">
+  		<div class="card card-body">
+    		<div class="row">
+    	<?php	
+		// new terms or category lists
+		$terms = get_terms( array(
+    		'taxonomy' => 'category',
+    		'hide_empty' => false,
+		) ); 
+		foreach ($terms as $data) { ?>
+			<div class="col-md-4 col-sm-12">
+		<label>
+			<input type="checkbox" name="<?php echo $data->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$data->slug, $user->ID ) == 1 ) echo "checked"; ?>>
+			<strong><?php echo $data->name ;?></strong>
+		</label>
+		
+		</div>
+		<?php } ?>
+			</div>
+  		</div>
+	</div>
 
+	<div class="col-md-12 col-sm-12 mt-3">
+		<button class="btn btn-primary btn-sm  chev" type="button" data-toggle="collapse" data-target="#news" aria-expanded="false" aria-controls="collapseExample">Newspapers</button>
+	</div>
+	<div class="collapse mt-2" id="news">
+  		<div class="card card-body">
+  			<div class="row">
+    	<?php	
+		// new terms or category lists
+		$terms = get_terms( array(
+    		'taxonomy' => 'newspapers',
+    		'hide_empty' => false,
+		) ); 
+		foreach ($terms as $data) { ?>
+			<div class="col-md-4 col-sm-12">
+		<label>
+			<input type="checkbox" name="<?php echo $data->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$data->slug, $user->ID ) == 1 ) echo "checked"; ?>>
+			<strong><?php echo $data->name ;?></strong>
+		</label>
+		
+		</div>
+		<?php } ?>
+			</div>
+  		</div>
+	</div>
+
+	<div class="col-md-12 col-sm-12 mt-3">
+		<button class="btn btn-primary btn-sm chev" type="button" data-toggle="collapse" data-target="#products" aria-expanded="false" aria-controls="collapseExample">Products</button>
+	</div>
+	<div class="collapse mt-2" id="products">
+  		<div class="card card-body">
+  			<div class="row">
+    	<?php	
+		// new terms or category lists
+		$terms = get_terms( array(
+    		'taxonomy' => 'products',
+    		'hide_empty' => false,
+		) ); 
+		foreach ($terms as $data) { ?>
+			<div class="col-md-4 col-sm-12">
+		<label>
+			<input type="checkbox" name="<?php echo $data->slug ;?>" value="1" <?php if( get_the_author_meta( 'interest-'.$data->slug, $user->ID ) == 1 ) echo "checked"; ?>>
+			<strong><?php echo $data->name ;?></strong>
+		</label>
+		
+		</div>
+		<?php } ?>
+			</div>
+  		</div>
+	</div>
+
+<?php
+}
 /*
 	=====================================
 		Add Custom Interest Field on User Profile
@@ -1025,8 +1125,9 @@ if( isset( $_POST[ 'meta-checkbox' ] ) ) {
 add_action( 'save_post', 'sm_meta_save' );
 
 
-
-
+/* localizing scripts */
+wp_enqueue_script( 'custom-ajax-request', '/path/to/settings.js', array( 'jquery' ) );
+wp_localize_script( 'custom-ajax-request', 'MyAjax', array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
 /*
 wpbeginner pagination
 */
@@ -1174,7 +1275,7 @@ function cubiq_template_redirect () {
 
 	if ( is_page( 'user' ) && !is_user_logged_in() ) {
 		// wp_redirect( home_url( '/login/' ) );
-		wp_redirect( home_url( '/?a=login' ) );
+		wp_redirect( home_url( '/?a=login-error' ) );
 		exit();
 	}
 }
@@ -1208,11 +1309,26 @@ function cubiq_login_redirect ($redirect_to, $url, $user) {
 	// 	return $redirect_to;
 	// } else {
 	// }
-	wp_redirect( home_url( '/?a=login' ));
+	wp_redirect( home_url( '/?a=login-error' ));
 	exit;
 }
 add_filter('login_redirect', 'cubiq_login_redirect', 10, 3);
 
+
+// redirect after password change
+add_action( 'validate_password_reset', 'rsm_redirect_after_rest', 10, 2 );
+function rsm_redirect_after_rest($errors, $user) {
+    global $rp_cookie, $rp_path;
+    if ( ( ! $errors->get_error_code() ) && isset( $_POST['pass1'] ) && !empty( $_POST['pass1'] ) ) {
+        reset_password( $user, $_POST['pass1'] );
+        setcookie( $rp_cookie, ' ', time() - YEAR_IN_SECONDS, $rp_path, COOKIE_DOMAIN, is_ssl(), true );
+        wp_set_current_user( $user->ID );
+        wp_set_auth_cookie( $user->ID );
+        do_action( 'wp_login', $user->user_login );//`[Codex Ref.][1]
+        wp_redirect( home_url() );
+        exit;
+    }
+}
 
 /**
  * Send users a notification of new grower posts 
@@ -1235,7 +1351,7 @@ $papers = wp_get_post_terms( $post_id, 'newspapers');
 	$paper_names = explode(', ', $paper_names);
 
 foreach ($paper_names as $paper) {
-	// echo $paper;
+	echo $paper;
 	add_to_schedule_email( $paper, $post_id );
 }
 
@@ -1253,16 +1369,17 @@ add_action( 'new_to_publish', 'notify_growers' );
 
 
 
-// function js_enqueue_scripts() {
-//     wp_enqueue_script ("my-ajax-handle", get_stylesheet_directory_uri() . "/assets/js/ajax.js", array('jquery')); 
-//     //the_ajax_script will use to print admin-ajaxurl in custom ajax.js
-//     wp_localize_script('my-ajax-handle', 'the_ajax_script', array('ajaxurl' =>admin_url('admin-ajax.php')));
-// } 
-// add_action("wp_enqueue_scripts", "js_enqueue_scripts");
+function js_enqueue_scripts() {
+    wp_enqueue_script ("my-ajax-handle", get_stylesheet_directory_uri() . "/assets/js/ajax.js", array('jquery')); 
+    //the_ajax_script will use to print admin-ajaxurl in custom ajax.js
+    wp_localize_script('my-ajax-handle', 'the_ajax_script', array('ajaxurl' =>admin_url('admin-ajax.php')));
+} 
+add_action("wp_enqueue_scripts", "js_enqueue_scripts");
 
 
-// add_action('wp_ajax_call_post', 'call_post');
-// add_action('wp_ajax_nopriv_call_post', 'call_post');
+add_action('wp_ajax_call_post', 'misha_filter_function');
+add_action('wp_ajax_nopriv_call_post', 'misha_filter_function');
+
 
 function call_post(){
 
@@ -1359,7 +1476,7 @@ if(!current_user_can('edit_users')){
 			$kk = 1;
 			foreach ($res as $data) {
 				echo '<tr>';
-				echo '<td>'.$kk.'</td>';
+				echo '<td>'.$kk.' - '.$data['id'].'</td>';
 				echo '<td>'.$data['company_name'].'</td>';
 				echo '<td>'.$data['contact_name'].'</td>';
 				echo '<td>'.$data['email'].'</td>';
@@ -1368,7 +1485,7 @@ if(!current_user_can('edit_users')){
 				echo '<td>'.$data['tender_link'].'</td>';
 				echo '<td>'.$data['urgency'].'</td>';
 				echo '<td>'.$data['inserted_date'].'</td>';
-				// echo '<td><a href="#" class="btn_del" id="'.$data['id'].'">Delete</a></td>';
+				echo '<td><a href="#" class="btn_del" id="'.$data['id'].'">Delete</a></td>';
 				echo '</tr>';
 
 			$kk++; } ?>
@@ -1377,14 +1494,35 @@ if(!current_user_can('edit_users')){
 <script src="<?php bloginfo('template_url') ?>/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	$(".btn_del").click(function() {
-		rec_id = this.id;
+	var ajaxUrl = "<?php echo admin_url('admin-ajax.php')?>";
 
-  		var r=confirm("Confirm Delete this Data?")
+	$(".btn_del").click(function() {
+		var el = this;
+		var rec_id = this.id;
+
+  		var r=confirm("Confirm Delete this Data?"+rec_id)
         if (r==true)
-        	<?php delete_qq() ?>
-        	<?php //global $wpdb;$wpdb->query('DELETE * FROM wp_contactus WHERE id = 1'); ?>
-          window.location = url+"?id="+rec_id;
+       	// console.log(rec_id);
+       	$.ajax({
+       		url: ajaxUrl,
+           action: 'delete_contact_records',
+           type: 'POST',
+           data: { id:rec_id },
+           success: function(response){
+
+             // Removing row from HTML Table
+             if(response == 1){
+				$(el).closest('tr').css('background','tomato');
+		                $(el).closest('tr').fadeOut(800,function(){
+				   $(this).remove();
+				});
+		     }else{
+		     	$(el).closest('tr').css('background','tomato');
+				alert('Record not deleted.');
+		     }
+           }
+         });
+
       
         else
           return false;
@@ -1411,6 +1549,93 @@ $(document).ready(function(){
 }
 // ends here
 
+add_action('wp_ajax_delete_contact_records', 'delete_contact_records');
+ add_action('wp_ajax_nopriv_delete_contact_records', 'delete_contact_records'); 
+
+function delete_contact_records(){
+	if(isset($_POST['id'])){
+   $id=  $_POST['id'];
+   global $wpdb;
+   $wpdb->query(
+              'DELETE  FROM wp_contactus
+               WHERE id = "'.$id.'"'
+	);
+   echo 1;
+   exit;
+}
+echo 0;
+exit;
+}
+
+/*
+	==========================================================
+		Add subpage to Proposal writing helps
+	==========================================================
+*/
+add_action('admin_menu', 'edit_proposal_writing_support_form');
+function edit_proposal_writing_support_form()
+{
+	// add_users_page( $page_title, $menu_title, $capability, $menu_slug, $function);
+	add_users_page( 'View Proposal Writing Support', 'View Proposal Writing Records', 'edit_users', 'proposal_records', 'edit_proposal_contents' );
+}
+
+function edit_proposal_contents(){
+if(!current_user_can('edit_users')){
+	wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+}	//end if user is allowed.
+	//add any form processing code here in PHP:
+	$users = get_users();
+	// var_dump( $users );
+	// echo $users[0]->{'ID'};
+	global $wpdb;
+	$table="wp_proposal_writing_support";
+	$res = $wpdb->get_results("SELECT * FROM wp_proposal_writing_support ORDER BY id desc",ARRAY_A);
+	?>
+
+<div style="margin-top: 14px;">
+	<h2>Proposal Writing Support Records:</h2>
+	<table class="wp-list-table widefat fixed striped users"  style="padding: 8px;">
+		<thead>
+			<th width="5%">S.N.</th>
+			<th>Company Name</th>
+			<th>Contact Name</th>
+			<th>Email</th>
+			<th>Phone Number</th>
+			
+			<th>Proposal Link</th>
+			<th>Baseline Data</th>
+			<th>Budget Volume</th>
+			<th>No of Pages</th>
+			<th>Insert Date</th>
+		</thead>
+		<tbody>
+			<?php
+			$kk = 1;
+			foreach ($res as $data) {
+				echo '<tr>';
+				echo '<td>'.$kk.'</td>';
+				echo '<td>'.$data['company_name'].'</td>';
+				echo '<td>'.$data['contact_name'].'</td>';
+				echo '<td>'.$data['email'].'</td>';
+				echo '<td>'.$data['contact_numnber'].'</td>';
+				
+				echo '<td>'.$data['proposal_link'].'</td>';
+				echo '<td>'.$data['baseline'].'</td>';
+				echo '<td>'.$data['budget_volume'].'</td>';
+				echo '<td>'.$data['pages_number'].'</td>';
+				echo '<td>'.$data['inserted_date'].'</td>';
+				// echo '<td><a href="#" class="btn_del" id="'.$data['id'].'">Delete</a></td>';
+				echo '</tr>';
+
+			$kk++; } ?>
+		</tbody>
+	</table>
+
+</div>
+<?php
+}
+// ends here
+
 function delete_qq(){
 	global $wpdb;
 	$wpdb->query('DELETE * FROM wp_contactus WHERE id = 1');
@@ -1430,4 +1655,687 @@ function delete_row() {
 }
 add_action('wp_ajax_your_delete_action', 'delete_row');
 add_action( 'wp_ajax_nopriv_your_delete_action', 'delete_row');
+
+
+
+
+// filter data
+function filter_tender_posts(){
+	$pub_date         = $_POST['pub_date'];
+	$end_date         = $_POST['end_date'];
+	$fname         = $_POST['fname'];
+
+	global $wpdb;
+	$table_name = 'wp_test';
+	$entry = $wpdb->insert($table_name, array(
+						 'pub_date' 	=> $pub_date, 
+					 	 'end_date'			=>  $end_date,
+				 		 'fname'		=>	$fname,
+						 )
+	 );
+	print_r($_POST);
+	// die;
+}
+
+// if( isset($_POST['filter_submit']) )
+// {
+// 	filter_tender_posts();
+// }
+
+// function ajax_filter_posts_scripts() {
+//   // Enqueue script
+//   wp_register_script('afp_script', get_template_directory_uri() . '/js/ajax-filter-posts.js', false, null, false);
+//   wp_enqueue_script('afp_script');
+
+//   wp_localize_script( 'afp_script', 'afp_vars', array(
+//         'afp_nonce' => wp_create_nonce( 'afp_nonce' ), // Create nonce which we later will use to verify AJAX request
+//         'afp_ajax_url' => admin_url( 'admin-ajax.php' ),
+//       )
+//   );
+// }
+// add_action('wp_enqueue_scripts', 'ajax_filter_posts_scripts', 100);
+
+
+add_action('wp_ajax_myfilter', 'misha_filter_function'); // wp_ajax_{ACTION HERE} 
+add_action('wp_ajax_nopriv_myfilter', 'misha_filter_function');
+ 
+function misha_filter_function(){
+	$card = $_POST['card'];
+	$list = $_POST['list'];
+
+	if($_POST['expired'] == 0){
+		$exp_comp = '<=';
+	}elseif($_POST['expired'] == 1){
+		$exp_comp = '<=';
+	}else{
+		$exp_comp = '<=';
+	}
+
+	$date = date("Y-m-d");
+
+	$args = array(
+		'orderby' => 'date', // we will sort posts by date
+		'order'	=> $_POST['date'], // ASC or DESC
+		'meta_query' => array(
+		        array(
+		            'key' => 'submission_date_eng',
+		            'value' => $date,
+		            'type' => 'DATE',
+					'compare' => $exp_comp,
+		        	)		    		
+	 			)
+	);
+	// echo '<pre>';
+	// print_r($_POST);
+	// echo '</pre>';
+	// for taxonomies / categories
+	if( isset( $_POST['categoryfilter'] ) )
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => 'category',
+				'field' => 'id',
+				'terms' => $_POST['categoryfilter']
+			)
+		);
+
+	if( isset( $_POST['papers'] ) )
+		$args['tax_query'] = array(
+			array(
+				'taxonomy' => 'newspapers',
+				'field' => 'id',
+				'terms' => $_POST['papers']
+			)
+		);
+
+		$args['meta_query'] = array( 'relation'=>'OR' ); // AND means that all conditions of meta_query should be true
+ 
+ // create $args['meta_query'] array if one of the following fields is filled
+	if( isset( $_POST['pub_date_from'] ) && $_POST['pub_date_from'] || isset( $_POST['pub_date_to'] ) && $_POST['pub_date_to'] ){
+
+		$args['meta_query'] = array( 'relation'=>'AND' ); 
+
+		if( isset( $_POST['pub_date_from'] ) && $_POST['pub_date_from'] && isset( $_POST['pub_date_to'] ) && $_POST['pub_date_to'] ) {
+		$args['meta_query'][] = array(
+			'key' => 'published_date_eng',
+			'value' => array( $_POST['pub_date_from'], $_POST['pub_date_to'] ),
+			'type' => 'DATE',
+			'compare' => 'between'
+		);
+	} else {
+		// if only min price is set
+		if( isset( $_POST['pub_date_from'] ) && $_POST['pub_date_from'] )
+			$args['meta_query'][] = array(
+				'key' => 'published_date_eng',
+				'value' => $_POST['pub_date_from'],
+				'type' => 'DATE',
+				'compare' => '>='
+			);
+ 
+		// if only max price is set
+		if( isset( $_POST['pub_date_to'] ) && $_POST['pub_date_to'] )
+			$args['meta_query'][] = array(
+				'key' => 'published_date_eng',
+				'value' => $_POST['pub_date_to'],
+				'type' => 'DATE',
+				'compare' => '<='
+			);
+		}
+	}
+
+	// create $args['meta_query'] array if one of the following fields is filled
+	if( isset( $_POST['pub_date_from1'] ) && $_POST['pub_date_from1'] || isset( $_POST['pub_date_to1'] ) && $_POST['pub_date_to1'] ){
+
+		$args['meta_query'] = array( 'relation'=>'AND' ); 
+
+		if( isset( $_POST['pub_date_from1'] ) && $_POST['pub_date_from1'] && isset( $_POST['pub_date_to1'] ) && $_POST['pub_date_to1'] ) {
+		$args['meta_query'][] = array(
+			'key' => 'published_date',
+			'value' => array( $_POST['pub_date_from1'], $_POST['pub_date_to1'] ),
+			'type' => 'DATE',
+			'compare' => 'between'
+		);
+	} else {
+		// if only min price is set
+		if( isset( $_POST['pub_date_from1'] ) && $_POST['pub_date_from1'] )
+			$args['meta_query'][] = array(
+				'key' => 'published_date',
+				'value' => $_POST['pub_date_from1'],
+				'type' => 'DATE',
+				'compare' => '>='
+			);
+ 
+		// if only max price is set
+		if( isset( $_POST['pub_date_to1'] ) && $_POST['pub_date_to1'] )
+			$args['meta_query'][] = array(
+				'key' => 'published_date',
+				'value' => $_POST['pub_date_to1'],
+				'type' => 'DATE',
+				'compare' => '<='
+			);
+		}
+	}
+
+// submission date english query
+if( isset( $_POST['sub_date_from'] ) && $_POST['sub_date_from'] && isset( $_POST['sub_date_to'] ) && $_POST['sub_date_to'] ) {
+	
+	$args['meta_query'] = array( 'relation'=>'AND' );
+
+	if( isset( $_POST['sub_date_from'] ) && $_POST['sub_date_from'] && isset( $_POST['sub_date_to'] ) && $_POST['sub_date_to'] ) {
+
+		$args['meta_query'][] = array(
+			'key' => 'submission_date_eng',
+			'value' => array( $_POST['sub_date_from'], $_POST['sub_date_to'] ),
+			'type' => 'DATE',
+			'compare' => 'between'
+		);
+	} else {
+		// if only min price is set
+		if( isset( $_POST['sub_date_from'] ) && $_POST['sub_date_from'] )
+			$args['meta_query'][] = array(
+				'key' => 'submission_date_eng',
+				'value' => $_POST['sub_date_from'],
+				'type' => 'DATE',
+				'compare' => '>='
+			);
+ 
+		// if only max price is set
+		if( isset( $_POST['sub_date_to'] ) && $_POST['pub_date_to'] )
+			$args['meta_query'][] = array(
+				'key' => 'submission_date_eng',
+				'value' => $_POST['sub_date_to'],
+				'type' => 'DATE',
+				'compare' => '<='
+			);
+	}
+}
+
+// nepali submission date
+	if( isset( $_POST['sub_date_from1'] ) && $_POST['sub_date_from1'] && isset( $_POST['sub_date_to1'] ) && $_POST['sub_date_to1'] ) {
+
+	$args['meta_query'] = array( 'relation'=>'AND' );
+
+	if( isset( $_POST['sub_date_from1'] ) && $_POST['sub_date_from1'] && isset( $_POST['sub_date_to1'] ) && $_POST['sub_date_to1'] ) {
+
+		$args['meta_query'][] = array(
+			'key' => 'expiry_date',
+			'value' => array( $_POST['sub_date_from1'], $_POST['sub_date_to1'] ),
+			'type' => 'DATE',
+			'compare' => 'between'
+		);
+	} else {
+		// if only min price is set
+		if( isset( $_POST['sub_date_from1'] ) && $_POST['sub_date_from1'] )
+			$args['meta_query'][] = array(
+				'key' => 'expiry_date',
+				'value' => $_POST['sub_date_from1'],
+				'type' => 'DATE',
+				'compare' => '>='
+			);
+ 
+		// if only max price is set
+		if( isset( $_POST['sub_date_to1'] ) && $_POST['pub_date_to1'] )
+			$args['meta_query'][] = array(
+				'key' => 'expiry_date',
+				'value' => $_POST['sub_date_to1'],
+				'type' => 'DATE',
+				'compare' => '<='
+			);
+	}
+}
+ 
+	$query = new WP_Query( $args );
+ 	
+ 	$g=1;
+	if( $query->have_posts() ) :
+		while( $query->have_posts() ): $query->the_post();
+		$cat_id = get_the_ID();
+
+		$meta = get_post_meta($cat_id);
+		// print_r($meta);
+		$cat_names = $paper_names = $ind_names = $published_date = $expiry = '-';
+			
+		$category = wp_get_post_terms( $cat_id, 'category');
+		$cc = count($category);
+		$cnames = array();
+		for ($i=0; $i < $cc; $i++) { 
+			$cname = $category[$i]->name;
+			$cnames[] = $cname;
+		}
+		$cat_names = implode(', ', $cnames);
+
+		$papers = wp_get_post_terms( $cat_id, 'newspapers'); 
+		// print_r($papers);
+		$papc = count($papers);
+		$ppnames = array();
+		for ($i=0; $i < $papc; $i++) { 
+			$papname = $papers[$i]->name;
+			$ppnames[] = $papname;
+		}
+		$paper_names = implode(', ', $ppnames);
+
+		$ind = wp_get_post_terms( $cat_id, 'industries'); 
+		$ic = count($ind);
+		$inames = array();
+		for ($i=0; $i < $ic; $i++) { 
+			$iname = $ind[$i]->name;
+			$inames[] = $iname;
+		}
+		$ind_names = implode(', ', $inames);
+
+		$prod = wp_get_post_terms( $cat_id, 'products');
+		$pc = count($prod);
+		$pnames = array();
+		for ($i=0; $i < $pc; $i++) { 
+			$pname = $prod[$i]->name;
+			$pnames[] = $pname;
+		}
+		$pro_names = implode(', ', $pnames);
+
+		$publisher = get_post_meta( $cat_id, 'publisher' , true );
+
+    
+    // check different date type
+		if(isset($_POST['pub_date_from']) || isset($_POST['sub_date_from'])){
+			$published_date = get_post_meta( $cat_id, 'published_date_eng' , true );
+			$expiry = get_post_meta( $cat_id, 'submission_date_eng' , true );
+		}else{
+			$published_date = get_post_meta( $cat_id, 'published_date' , true );
+			$expiry = get_post_meta( $cat_id, 'expiry_date' , true );
+		}
+		// $published_date = get_post_meta( $cat_id, 'published_date' , true );
+		$p_date = get_post_meta( $cat_id, 'submission_date_eng' , true );
+		// $expiry = get_post_meta( $cat_id, 'expiry_date' , true );
+
+		$today = new DateTime(date("Y-m-j"));
+		if($p_date){
+	        $sd = DateTime::createFromFormat( "Y-m-d", $p_date )->settime(0,0);
+	        $diff = $today->diff($sd)->format("%R%a");
+		}
+
+		// check if which tabs to append; card or list
+		// if($list == '1'){
+			/*echo '<tr>';
+				echo '<td>'.$g.'</td>';
+				echo '<td>'.$publisher.'</td>';
+				echo '<td>'.get_the_title().'</td>';
+				echo '<td>'.$published_date.'</td>';
+				echo '<td>'.$expiry.'</td>';
+				echo '<td>'.$cat_names.'</td>';
+				echo '<td>'.$paper_names.'</td>';
+				echo '<td>'.$ind_names.'</td>'; ?>
+				<td width="">
+				<?php
+				if( $diff >= 0){
+				switch ( substr( $diff, 1 ) ) {
+					case 0:
+						echo 'Ending Today';
+						break;
+
+					case 1:
+						echo substr( $diff, 1 ) . ' day';
+						break;
+
+					default:
+						echo substr( $diff, 1 ) . ' days';
+						break;
+					}
+				} else {
+					echo "<span style='color:red'>Expired</span>";
+				}
+				?>
+				</td>
+				<td>
+				<?php
+				if ( has_post_thumbnail() ) { ?>
+				    <!-- <figure> <a href="" data-toggle="modal" data-target="#image_modal<?= $im;?>"><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a> </figure> -->
+				    <figure><a class="btn_clk" data-img="<?= $cat_id; ?>" ><?php the_post_thumbnail( array( 50, 50 ) , array('class' => 'post-thumbnail-mains')); ?></a></figure>
+				<?php }
+				?>
+			</td>
+			<?php echo '</tr>';*/
+		// }else{
+		// 	echo get_the_title();
+		// }
+	if( $diff >= 0){
+		switch ( substr( $diff, 1 ) ) {
+			case 0:
+				$status = 'Ending Today';
+				break;
+
+			case 1:
+				$status = substr( $diff, 1 ) . ' day';
+				break;
+
+			default:
+				$status = substr( $diff, 1 ) . ' days';
+				break;
+			}
+		} else {
+			$status = "<span style='color:red'>Expired</span>";
+		}
+
+		if ( has_post_thumbnail() ) { 
+			$img = get_the_post_thumbnail_url( );
+		}else{
+			$img = get_template_directory_uri().'/img/unnamed.png';
+		}
+		$data = array(
+            "publisher"     => $publisher,
+            "title"  => mb_strimwidth(get_the_title(), 0, 25, '...'),
+            "link"  => get_the_permalink(),
+            "published_date"   => $published_date,
+            "expiry_date" => $expiry,
+            "category"   => mb_strimwidth($cat_names, 0, 25, '...'),
+            "paper_names" => mb_strimwidth($paper_names, 0, 25, '...'),
+            "ind_names" => mb_strimwidth($ind_names, 0, 25, '...'),
+            "status" => $status,
+            "post_id" => $cat_id,
+            "img" => $img,
+        );
+        $temp[] = $data;
+
+
+		$g++; endwhile;
+		wp_reset_postdata();
+
+		echo json_encode($temp);die;
+	else :
+		echo 'No posts found';
+	endif;
+
+
+ ?>
+
+ <script type="text/javascript">
+ 	$(document).ready(function() {
+$(".btn_clk").click( function(){
+    	val = $(this).data("img");
+    	// alert(val);
+    	var values = {
+            'post_id' : val
+        };
+
+        $('#img_modal').modal('show');
+      	// console.log(values);
+        $.ajax({
+          type: "POST",
+          url: "<?= bloginfo('template_url') ?>/parts/fetch_info_by_id.php",
+          // dataType: 'JSON',
+          data: values,
+          success: function(resp){
+          
+        // $('.mdl-response').show();
+        $(".response").html(resp);
+           },
+           error: function (xhr, ajaxOptions, thrownError) {
+                    var errorMsg = 'Image Request Failed: ' + xhr.responseText;
+                    $('.response').html(errorMsg);
+			}
+         });
+   	});
+});
+ </script>
+	<?php die();
+}
+
+
+
+// ajax pagination home page
+add_action('wp_ajax_load_posts_by_ajax', 'load_posts_by_ajax_callback');
+ add_action('wp_ajax_nopriv_load_posts_by_ajax', 'load_posts_by_ajax_callback'); 
+
+function load_posts_by_ajax_callback(){
+    // $check_ajax_referer('load_more_posts', 'security');
+    $paged = 1;
+    $paged = $_POST["page"];
+	$date = date("Y-m-d");
+
+if( is_user_logged_in() ) : 
+	$user_id = get_current_user_id();
+	$user = get_userdata( $user_id );
+	$role = $user->roles[0];
+
+	if( is_super_admin() || $role == 'Editor' || $role == 'Subscriber' || $role == 'Contributor') : 
+		
+		$comp = '>=';
+	else:
+		$t = get_user_meta($user_id);
+		$subs = $t['user_type'][0];		
+
+		if($subs == 'paid'){
+			$comp = '>=';
+		}elseif($subs == 'trial'){
+			$comp = '>=';
+		}else{
+			$comp = '>=';
+		}
+	endif;
+else:
+	$comp = '<=';
+endif;
+
+    $args = array(
+    	'orderby' => 'meta_value_num',
+		'order' => 'ASC',
+        'post_type' => 'post',
+        'posts_per_page' => 6,
+        'paged' => $paged,
+        'meta_query' => array(
+	        array(
+	            'key' => 'submission_date_eng',
+	            'value' => $date,
+	            'type' => 'DATE',
+				'compare' => $comp,
+	        	)		    		
+ 			)	
+        
+    );
+	$cat_posts= new WP_query($args);
+
+require('parts/loadmore_home_card.php');
+
+    
+
+    ?>
+
+    <script type="text/javascript">
+    	$(document).ready(function() {
+
+    	var ajaxUrl = "<?php echo admin_url('admin-ajax.php')?>";
+    var page = 1; // What page we are on.
+    var ppp = 3; // Post per page
+ $(".more_posts").click( function(){ 
+ 	// $( "#outer" ).mouseover(function() {
+        $(".more_posts").attr("disabled",true); // Disable the button, temp.
+        id = $(this).data("id");
+
+        // alert(ajaxUrl);
+		$('html, body').animate({
+	        scrollTop: $("#outer1").offset().top -270
+	    }, 'slow'); // scroll to div
+
+   		$('.loading_img').show();
+		var data = {
+			'action': 'load_posts_by_ajax',
+			'page': id,
+			// 'security': '<?php echo wp_create_nonce("load_more_posts"); ?>',
+		};
+
+		$.post(ajaxUrl, data, function(response){
+			// $('.my-posts').append(response);
+			$('.resp_card').html(response).hide().fadeIn(1500);
+			$('.loading_img').hide();
+			page++;
+			
+
+		});
+	});
+
+ $(".btn_clk").click( function(){
+    	val = $(this).data("img");
+    	// alert(val);
+    	var values = {
+            'post_id' : val
+        };
+
+        $('#img_modal').modal('show');
+      	// console.log(values);
+        $.ajax({
+          type: "POST",
+          url: "<?= bloginfo('template_url') ?>/parts/fetch_info_by_id.php",
+          // dataType: 'JSON',
+          data: values,
+          success: function(resp){
+          
+        // $('.mdl-response').show();
+        $(".response").html(resp);
+           },
+           error: function (xhr, ajaxOptions, thrownError) {
+                    var errorMsg = 'Image Request Failed: ' + xhr.responseText;
+                    $('.response').html(errorMsg);
+			}
+         });
+   	});
+
+});
+    </script>
+
+<?php    exit; 
+} 
+
+
+
+// ajax pagination home page
+add_action('wp_ajax_load_posts_by_cat_ajax', 'load_posts_by_cat_ajax_callback');
+ add_action('wp_ajax_nopriv_load_posts_by_cat_ajax', 'load_posts_by_cat_ajax_callback'); 
+
+function load_posts_by_cat_ajax_callback(){
+    // $check_ajax_referer('load_more_posts', 'security');
+    $paged = 1;
+    $paged = $_POST["page"];
+    $taxonomy = $_POST["taxonomy"];
+    echo $taxonomy;
+	$date = date("Y-m-d");
+
+if( is_user_logged_in() ) : 
+	$user_id = get_current_user_id();
+	$user = get_userdata( $user_id );
+	$role = $user->roles[0];
+
+	if( is_super_admin() || $role == 'Editor' || $role == 'Subscriber' || $role == 'Contributor') : 
+		
+		$comp = '>=';
+	else:
+		$t = get_user_meta($user_id);
+		$subs = $t['user_type'][0];		
+
+		if($subs == 'paid'){
+			$comp = '>=';
+		}elseif($subs == 'trial'){
+			$comp = '>=';
+		}else{
+			$comp = '>=';
+		}
+	endif;
+else:
+	$comp = '<=';
+endif;
+
+    $args = array(
+    	'orderby' => 'meta_value_num',
+		'order' => 'ASC',
+        'post_type' => 'post',
+        'posts_per_page' => 6,
+        'paged' => $paged,
+        'meta_query' => array(
+	        array(
+	            'key' => 'submission_date_eng',
+	            'value' => $date,
+	            'type' => 'DATE',
+				'compare' => $comp,
+	        	)		    		
+ 			),
+ 		'tax_query' => array(
+            array(
+                'taxonomy' => $taxonomy,
+                'field' => 'slug',
+                'terms' => $slug,
+                
+            ),
+        ),	
+        
+    );
+	$cat_posts= new WP_query($args);
+
+require('parts/loadmore_cat_card.php');
+
+    
+
+    ?>
+
+    <script type="text/javascript">
+    	$(document).ready(function() {
+
+    	var ajaxUrl = "<?php echo admin_url('admin-ajax.php')?>";
+    var page = 1; // What page we are on.
+    var ppp = 3; // Post per page
+ $(".more_posts").click( function(){ 
+ 	// $( "#outer" ).mouseover(function() {
+        $(".more_posts").attr("disabled",true); // Disable the button, temp.
+        id = $(this).data("id");
+
+        // alert(ajaxUrl);
+		$('html, body').animate({
+	        scrollTop: $("#outer1").offset().top -270
+	    }, 'slow'); // scroll to div
+
+   		$('.loading_img').show();
+		var data = {
+			'action': 'load_posts_by_ajax',
+			'page': id,
+			// 'security': '<?php echo wp_create_nonce("load_more_posts"); ?>',
+		};
+
+		$.post(ajaxUrl, data, function(response){
+			// $('.my-posts').append(response);
+			$('.resp_card').html(response).hide().fadeIn(1500);
+			$('.loading_img').hide();
+			page++;
+			
+
+		});
+	});
+
+ $(".btn_clk").click( function(){
+    	val = $(this).data("img");
+    	// alert(val);
+    	var values = {
+            'post_id' : val
+        };
+
+        $('#img_modal').modal('show');
+      	// console.log(values);
+        $.ajax({
+          type: "POST",
+          url: "<?= bloginfo('template_url') ?>/parts/fetch_info_by_id.php",
+          // dataType: 'JSON',
+          data: values,
+          success: function(resp){
+          
+        // $('.mdl-response').show();
+        $(".response").html(resp);
+           },
+           error: function (xhr, ajaxOptions, thrownError) {
+                    var errorMsg = 'Image Request Failed: ' + xhr.responseText;
+                    $('.response').html(errorMsg);
+			}
+         });
+   	});
+
+});
+    </script>
+
+<?php    exit; 
+} 
+
 ?>

@@ -27,6 +27,7 @@ endif;
 // category
 $currCat = get_category(get_query_var('cat'));
 $cat_name = $currCat->name;
+$cat_slug = $currCat->slug;
 $cat_id   = get_cat_ID( $cat_name );
 
 $current_page = get_queried_object();
@@ -34,7 +35,8 @@ $category     = $current_page->post_name;
 
 // print_r($current_page);
 $tag_id = $current_page->term_id;
-
+// echo $currCat->taxonomy;
+// echo $cat_slug;
 ?>
 <style type="text/css">
 	.brd-crm span{
@@ -63,233 +65,79 @@ $tag_id = $current_page->term_id;
 	</div>
 
 	<?php
-	echo '<div class="container mt-4">';
-		echo '<div class="row">';
-			echo '<div class="col-md-3 tax-heading ml-3">';
-				echo '<h4>'.$cat_name.'</h4>';
-			echo '</div>';
-		echo '</div>';
-	echo '<div>';
+	// echo '<div class="container mt-4">';
+	// 	echo '<div class="row">';
+	// 		echo '<div class="col-md-3 tax-heading ml-3">';
+	// 			echo '<h4>'.$cat_name.'</h4>';
+	// 		echo '</div>';
+	// 	echo '</div>';
+	// echo '<div>';
 
 	?>
 	<div class="container cards mb-4" style="min-height: 200px;">
-		<div class="row">
-		<?php
-// 		  if ( ! function_exists( 'pagination' ) ) :
-//     function pagination( $paged = '', $max_page = '' )
-//     {
-//         $big = 999999999; // need an unlikely integer
-//         if( ! $paged )
-//             $paged = get_query_var('paged');
-//         if( ! $max_page )
-//             $max_page = $wp_query->max_num_pages;
-
-//         echo paginate_links( array(
-//             'base'       => str_replace($big, '%#%', esc_url(get_pagenum_link( $big ))),
-//             'format'     => '?paged=%#%',
-//             'current'    => max( 1, $paged ),
-//             'total'      => $max_page,
-//             'mid_size'   => 1,
-//             'prev_text'  => __('«'),
-//             'next_text'  => __('»'),
-//             'type'       => 'list'
-//         ) );
-//     }
-// endif;
-
-		// $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
-		if ( get_query_var('paged') ) {
-			$paged = get_query_var('paged');
-		} elseif ( get_query_var('page') ) {
-			$paged = get_query_var('page');
-		} else {
-		   $paged = 1;
-		}
-
-        $query = new WP_Query( 
-            array(
-                'paged'         => $paged, 
-                // 'category_name' => $category,
-                'cat'       => array($tag_id),
-                'order'         => 'desc',
-                'post_type'     => 'post',
-                'post_status'   => 'publish',
-                'posts_per_page' => $max,
-            )
-        );
-
-		if ($query->have_posts()) : while ($query->have_posts()) : $query->the_post();
-
-			$cat_id = get_the_ID();
-
-			$category = wp_get_post_terms( $cat_id, 'category');
-			$cc = count($category);
-			$cnames = array();
-			for ($i=0; $i < $cc; $i++) { 
-				$cname = $category[$i]->name;
-				$cnames[] = $cname;
-			}
-			$cat_names = implode(', ', $cnames);
-
-			$papers = wp_get_post_terms( $cat_id, 'newspapers'); 
-			$papc = count($papers);
-			$ppnames = array();
-			for ($i=0; $i < $papc; $i++) { 
-				$papname = $papers[$i]->name;
-				$ppnames[] = $papname;
-			}
-			$paper_names = implode(', ', $ppnames);
-
-			$ind = wp_get_post_terms( $cat_id, 'industries'); 
-			$ic = count($ind);
-			$inames = array();
-			for ($i=0; $i < $ic; $i++) { 
-				$iname = $ind[$i]->name;
-				$inames[] = $iname;
-			}
-			$ind_names = implode(', ', $inames);
-
-			$prod = wp_get_post_terms( $cat_id, 'products');
-			$pc = count($prod);
-			$pnames = array();
-			for ($i=0; $i < $pc; $i++) { 
-				$pname = $prod[$i]->name;
-				$pnames[] = $pname;
-			}
-			$pro_names = implode(', ', $pnames);
-
-			$publisher = get_post_meta( $cat_id, 'publisher' , true );
-			$published_date = get_post_meta( $cat_id, 'published_date' , true );
-			$p_date = get_post_meta( $cat_id, 'submission_date_eng' , true );
-			$expiry = get_post_meta( $cat_id, 'expiry_date' , true );
-
-			$today = new DateTime(date("Y-m-j"));
-
-			?>
-
-			<div class="col-md-12 col-sm card p-2 mb-3"  style="border-bottom: 2px solid lightgrey;">
-			<div class="row mb-4">
-				<div class="col-md-3">
-					<?php if (has_post_thumbnail()) : ?>
-					<figure> <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'post-thumbnail-main')); ?></a> </figure>
-				<?php else:
-					echo '<img src="'.get_template_directory_uri().'/img/unnamed.png" class="post-thumbnail-main" width="200" height="150">';
-				endif; ?>
-				<a href="<?= the_permalink(); ?>" class="btn btn-primary btn-sm"><u>View Notice</u></a>
-				</div>
-				<div class="col-md-9">
-					<h5><a href="<?= the_permalink()?>"><?= get_the_title(); ?></a></h5>
-					<?php echo mb_strimwidth(get_the_content(), 0, 190, '...'); ?>
-
-					<div class="row">
-						<div class="col-md-12">
-						<p>
-							<span class="float-left"><i class="fa fa-list-ul "></i></span>
-							<span class="ml-4 float-left"><span><?= $cat_names; ?></span></span>	
-						</p></div>
-						<div class="col-md-12">
-						<p class="">
-							<span class="float-left"><i class="fa fa-paper-plane"></i></span>
-							<span class="ml-4 float-left"><span><?= $paper_names; ?></span></span>	
-						</p></div>
-
-						<div class="col-md-12">
-						<p class="">
-							<span class="float-left"><i class="fa fa-calendar"></i></span>
-							<span class="ml-4 float-left"><span><?= $published_date; ?></span></span>	
-						</p></div>
-						<div class="col-md-12">
-						<p class="">
-							<span class="float-left"><i class="fa fa-calendar" style="color: red;"></i></span>
-							<span class="ml-4 float-left"><span><?= $expiry; ?></span></span>	
-						</p></div>
-					</div>
-
-				</div>
+		<div class="row mt-4">
+			<div class="col-md-3 tax-heading">
+				<h4><?= $currCat->name; ?></h4>
 			</div>
+			<div class="col-md-7">
+				
 			</div>
-
-		<?php endwhile; 
-		
-
-		else:
-			echo '<div class="col-md-12 card" style="min-height: 150px;">';
-				echo "<h5 class='p-2'>No Posts Found</h5>";
-			echo '</div>';
-		endif;
-
-		// echo '<div class="col-md-12">';
-		// pagination( $paged, $query->max_num_pages);
-		// echo '</div>';
-
-		// pagination
-		if( is_super_admin() ) : 
-				echo '<div class="col-md-12 mt-3 pb-3" style="text-align: center;">';
-					wpbeginner_numeric_posts_nav();
-				echo '</div>';
-		endif;
-		if ($user) :
-			if($subs == 'paid') :
-				echo '<div class="col-md-12 mt-3 pb-3" style="text-align: center;">';
-					wpbeginner_numeric_posts_nav();
-				echo '</div>';
-			elseif($subs == 'trial') :
-				// nothing
-			else:
-				// nothing
-			endif;
-				
-		else:
-			// nothing
-		endif;
-				
-		?>
-		
-		<!-- Alternative Method -->
-		<!-- <div class="pagination">
-		    <?php 
-		        echo paginate_links( array(
-		            // 'base'         => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
-		            // 'base' => preg_replace('/\?.*/', '/', get_pagenum_link( 999999999 )) . '%_%',
-		            'total'        => $query->max_num_pages,
-		            'current'      => max( 1, get_query_var( 'paged' ) ),
-		            // 'format'       => '?paged=%#%',
-		            'format' => '?page=%#%',
-		            'show_all'     => true,
-		            'type'         => 'plain',
-		            'end_size'     => 2,
-		            'mid_size'     => 1,
-		            'prev_next'    => true,
-		            'prev_text'    => sprintf( '<i></i> %1$s', __( 'Newer Posts', 'text-domain' ) ),
-		            'next_text'    => sprintf( '%1$s <i></i>', __( 'Older Posts', 'text-domain' ) ),
-		            'add_args'     => false,
-		            'add_fragment' => '',
-		        ) );
-		    ?>
-		</div> -->
-
-<?php
-		// reset post query
-		wp_reset_postdata();
-
-		if($user){
-			if($subs == 'trial'){
-			echo '<div class="col-md-12 col-sm-12 info-trial pt-2">';
-				echo "<p><b>Please Upgrade to View More Tenders</b></p>";
-				echo '<p>Your Expiration Date is: <b>'.$exp_date.'</b></p>';
-			echo '</div>';
-			}
-		}else{
-			echo '<div class="col-md-12 col-sm-12 info-free-trial pt-2">';
-				echo '<p><b>Please Sign Up to View More Tenders</b></p>';
-			echo '</div>';
-		}
-
-		 ?>
+			<div class="col-md-2">
+			<ul class="nav nav-tabs" id="myTab" role="tablist">
+				  <li class="nav-item">
+				    <a class="nav-link active" id="home-tab1" data-toggle="tab" href="#cat_list_view" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-list"></i> </a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" id="home-tab2" data-toggle="tab" href="#cat_card_view" role="tab" aria-controls="home" aria-selected="false"><i class="fa fa-th-large"></i> </a>
+				  </li>
+			</ul>
+			</div>
 		</div>
+
+		<div class="row card tab-content" id="myTabContent">
+				<div class="tab-pane fade show active" id="cat_list_view" role="tabpanel" aria-labelledby="home-tab1">
+					<div class="row p-3">
+					<?php
+					get_template_part( 'template-parts/content', 'taxonomy-list' );
+					?>
+					</div>
+				</div>
+
+				<div class="tab-pane fade" id="cat_card_view" role="tabpanel" aria-labelledby="home-tab1">
+					<div class="row resp_card p-3">
+					<?php
+					// get_template_part( 'template-parts/content', 'taxonomy-card' );
+					?>
+					</div>
+				</div>
+			</div>
 
 	</div>
 </section>
 
+<script type="text/javascript">
+	
+	$(window).on("load", function () {
+		
+		var ajaxUrl = "<?php echo admin_url('admin-ajax.php')?>";
+    var page = 1;
+    // $(".more_posts").attr("disabled",true); 
+    	taxonomy = <?= $cat_slug; ?>
+    	console.log('tax is: '+taxonomy);
+        // id = $(this).data("id");
 
+   		$('.loading_img').show();
+		var data = {
+			'action': 'load_posts_by_cat_ajax',
+			'page': page,
+			'taxonomy': taxonomy,
+		};
+
+		$.post(ajaxUrl, data, function(response){
+			$('.resp_card').html(response).hide().fadeIn(1500);
+			// $('.loading_img').hide();
+			page++;
+		});
+});
+</script>
 <?php get_footer(); ?>

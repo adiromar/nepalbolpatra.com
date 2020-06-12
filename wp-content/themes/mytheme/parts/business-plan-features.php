@@ -1,4 +1,17 @@
-<link rel="stylesheet" type="text/css" href="https://startgrowimprove.com/wp-content/uploads/siteground-optimizer-assets/siteground-optimizer-combined-css-0f3726d2970ebf8db7f859335e0237ac.css">
+<!-- <link rel="stylesheet" type="text/css" href="https://startgrowimprove.com/wp-content/uploads/siteground-optimizer-assets/siteground-optimizer-combined-css-0f3726d2970ebf8db7f859335e0237ac.css"> -->
+<link rel="stylesheet" type="text/css" href="https://startgrowimprove.com/wp-content/uploads/siteground-optimizer-assets/siteground-optimizer-combined-css-57b3d2710248770438ea728ce24bf2e5.css">
+
+
+<style type="text/css">
+	
+
+
+
+
+</style>
+
+
+
 
 <div class="x-column x-sm x-1-1" style="padding: 0px;"><h3 class="h-custom-headline h3" style="margin: 0 0 0.15em;"><span>Business Plan Features</span></h3><hr class="x-gap" style="margin: 40px 0 0 0;"><ul class="x-feature-list" data-x-element="feature_list" data-x-params="{&quot;animationOffset&quot;:&quot;50&quot;,&quot;animationDelayInitial&quot;:&quot;0&quot;,&quot;animationDelayBetween&quot;:&quot;300&quot;}"><li class="x-feature-box left-text top-text cf" style=" max-width: none;" data-x-element="feature_box" data-x-params="{&quot;child&quot;:true,&quot;graphicAnimation&quot;:&quot;none&quot;,&quot;connectorAnimation&quot;:&quot;none&quot;,&quot;alignH&quot;:&quot;left&quot;,&quot;alignV&quot;:&quot;top&quot;}"><span class="x-feature-box-connector full" style="font-size: 60px; left: 0; right: calc(100% - 60px); border-left: 1px dashed #272727;"></span><div class="x-feature-box-graphic circle "><div class="x-feature-box-graphic-outer circle" style=" margin-right: 20px;"><div class="x-feature-box-graphic-inner circle" style="font-size: 60px;">
 	<i class="x-icon-gears fa fa-gears circle" data-x-icon-s="" style="margin: 0 auto; color: #ffffff; background-color: #2ecc71;"></i></div></div></div>

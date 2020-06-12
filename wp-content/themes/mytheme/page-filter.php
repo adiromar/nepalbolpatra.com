@@ -116,51 +116,64 @@ $the_query = new WP_Query( $args );
 		<div class="col-md-3 col-sm-12 col-xs-12 pl-4">
 			<div class="card p-3">
 				<span><i class="fa fa-search"></i> Filter By:</span>
-				
-
-
 				<hr>
-				<label><b>Newspapers</b></label>
 
-				<?php
-				$terms = get_terms(
-					array(
-						'taxonomy' => 'newspapers',
-						'hide_empty' => false,
-					)
-				);
+				<p>
+  				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    Newspapers</button>
+				</p>
 
-				foreach ($terms as $data) {
-				?>
+				<div class="collapse show" id="collapseExample">
+				  <div class="card card-body">
+				    <?php
+					$terms = get_terms(
+						array(
+							'taxonomy' => 'newspapers',
+							'hide_empty' => false,
+						)
+					);
+
+					foreach ($terms as $data) {
+					?>
+					<label class="form-check-label">
+      				<input type="checkbox" name="category" value="<?php echo $data->slug;?>" <?php  if( in_array( $data->slug, $filter_array ) ) { echo "checked"; } ?>>
+      				&nbsp;<?php echo $data->name;?>&nbsp;
+    				</label>
+			      <?php
+			      }
+			      ?>
+				  </div>
+				</div>
+				<hr>
+
+				<p>
+  				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+    Industries</button>
+				</p>
+
+				<div class="collapse" id="collapseExample2">
+				  <div class="card card-body">
+				    <?php
+					$indust = get_terms(
+						array(
+							'taxonomy' => 'industries',
+							'hide_empty' => false,
+						)
+					);
+
+					foreach ($indust as $ind) {
+					?>
 				<label class="form-check-label">
-      <input type="checkbox" name="category" value="<?php echo $data->slug;?>" <?php  if( in_array( $data->slug, $filter_array ) ) { echo "checked"; } ?>>
-      &nbsp;<?php echo $data->name;?>&nbsp;
-    </label>
-      <?php
-      }
-      ?>
-		
-	  <hr>
-      <label><b>Industry</b></label>
-
-				<?php
-				$indust = get_terms(
-					array(
-						'taxonomy' => 'industries',
-						'hide_empty' => false,
-					)
-				);
-
-				foreach ($indust as $ind) {
-				?>
-				<label class="form-check-label">
-      <input type="checkbox" name="industry" value="<?php echo $ind->slug;?>" <?php  if( in_array( $ind->slug, $filter_array1 ) ) { echo "checked"; } ?>>
-      &nbsp;<?php echo $ind->name;?>&nbsp;
-    </label>
-      <?php
-      }
-      ?>
-
+			      <input type="checkbox" name="industry" value="<?php echo $ind->slug;?>" <?php  if( in_array( $ind->slug, $filter_array1 ) ) { echo "checked"; } ?>>
+			      &nbsp;<?php echo $ind->name;?>&nbsp;
+			    </label>
+			      <?php
+			      }
+			      ?>
+				  </div>
+				</div>
+				<hr>
+				
 <!-- filter data -->
 <div class="mt-3">
 <a id="filter" href="#">
